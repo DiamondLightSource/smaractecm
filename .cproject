@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="0.340229585">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="0.340229585" moduleId="org.eclipse.cdt.core.settings" name="Default">
+				<externalSettings/>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration buildProperties="" description="" id="0.340229585" name="Default" parent="org.eclipse.cdt.build.core.prefbase.cfg">
+					<folderInfo id="0.340229585." name="/" resourcePath="">
+						<toolChain id="org.eclipse.cdt.build.core.prefbase.toolchain.195457605" name="No ToolChain" resourceTypeBasedDiscovery="false" superClass="org.eclipse.cdt.build.core.prefbase.toolchain">
+							<targetPlatform id="org.eclipse.cdt.build.core.prefbase.toolchain.195457605.1110433912" name=""/>
+							<builder id="org.eclipse.cdt.build.core.settings.default.builder.895210733" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="org.eclipse.cdt.build.core.settings.default.builder"/>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.libs.435546048" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs"/>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.1288897641" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
+								<option id="org.eclipse.cdt.build.core.settings.holder.symbols.1101411241" superClass="org.eclipse.cdt.build.core.settings.holder.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="size_t=long"/>
+									<listOptionValue builtIn="false" value="hsize_t=long"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1031191086" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.17673180" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1435902175" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/linux/"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.4.7/x86_64-redhat-linux"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.4.7"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-redhat-linux/4.4.7/include/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/epics/R3.14.12.3/base/include/os/Linux/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/epics/R3.14.12.3/base/include/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/prod/R3.14.12.3/support/asyn/4-21/include/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/prod/R3.14.12.3/support/motor/6-8-1dls4/include/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/prod/R3.14.12.3/support/areaDetector/1-9dls17/include/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/prod/R3.14.12.3/support/asynaid/1-10/include"/>
+								</option>
+								<option id="org.eclipse.cdt.build.core.settings.holder.symbols.1502797544" superClass="org.eclipse.cdt.build.core.settings.holder.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="size_t=long"/>
+									<listOptionValue builtIn="false" value="hsize_t=long"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1025492440" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.493811132" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.274805903" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/linux/"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.4.7/x86_64-redhat-linux"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.4.7"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-redhat-linux/4.4.7/include/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/epics/R3.14.12.3/base/include/os/Linux/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/epics/R3.14.12.3/base/include/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/prod/R3.14.12.3/support/asyn/4-21/include/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/prod/R3.14.12.3/support/motor/6-8-1dls4/include/"/>
+									<listOptionValue builtIn="false" value="/dls_sw/prod/R3.14.12.3/support/areaDetector/1-9dls17/include/"/>
+								</option>
+								<option id="org.eclipse.cdt.build.core.settings.holder.symbols.1443964836" superClass="org.eclipse.cdt.build.core.settings.holder.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="size_t=long"/>
+									<listOptionValue builtIn="false" value="hsize_t=long"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1230817352" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="smaractEcm.null.420994015" name="smaractEcm"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="0.340229585">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+		<buildTargets>
+			<target name="smaract Ecm src" path="smaractEcmApp/src" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments/>
+				<buildTarget/>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+		</buildTargets>
+	</storageModule>
+</cproject>
