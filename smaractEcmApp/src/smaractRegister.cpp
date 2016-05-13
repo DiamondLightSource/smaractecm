@@ -104,6 +104,12 @@ asynStatus smarpodAxisConfig(const char* ctlrName, int axisNum,
                 ctlrName);
         result = asynError;
     }
+    else if (smar == NULL)
+    {
+        printf("smarpodAxisConfig: Could not find smarpod :\"%s\"\n",
+                smarPodName);
+        result = asynError;
+    }
     else
     {
         SmarpodAxis* axis = new SmarpodAxis(ctlr, axisNum, smar);

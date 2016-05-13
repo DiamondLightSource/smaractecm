@@ -6,8 +6,10 @@ from iocbuilder.arginfo import makeArgInfo, Simple, Ident
 
 __all__ = ['SmaractEcmController', 'SmaractSmarpodAxis', 'Smarpod']
 
+
 class _smaractEcmControllerTemplate(AutoSubstitution):
     TemplateFile = 'smaractEcmController.template'
+
 
 # the following class should be as follows but it breaks the superclass init
 # class SmaractEcmController(_smaractEcmControllerTemplate, AsynPort):
@@ -18,6 +20,14 @@ class SmaractEcmController(_smaractEcmControllerTemplate, Device):
     DbdFileList = ['smaractEcm']
     UniqueName = 'PORT'
 
+    # this string conversion is a substitute for deriving from Asyn
+    # We can't derive from Asyn because the init functions for Asyn
+    # and Autosubstitutuion have incompatible init functions
+    # but the below is the only feature we need from Asyn (deliver 
+    # your port name when converting to string - instead of class name) 
+    def __str__(self):
+        return self.PORT
+    
     def __init__(self, asynPort, asynAddr, maxNoAxes,
                  movePollPeriod, notMovePollPeriod, **args):
         self.__super.__init__(**args)
@@ -40,29 +50,33 @@ class SmaractEcmController(_smaractEcmControllerTemplate, Device):
         notMovePollPeriod=Simple("poll period (ms) when not moving", int)
     )
 
+
 class Smarpod(Device):
     '''Smarpod in smaract Ecm controller'''
     def __init__(self, name, controller):
+        self.__super.__init__()
         self.name = name
         self.controller = controller
+        print "creating smarpod %s with controller %s" % (name, controller)
+
     ArgInfo = makeArgInfo(
         __init__,
         name=Simple("Smarpod name", str),
         controller=Ident("Ecm controller port name", SmaractEcmController)
     )
     def Initialise(self):
-        print 'smarpodAxisConfig("%(controller)s",' \
-            ' %(axis_number)d,' \
-            ' %(rotary)d)' % self.__dict__
+        print 'smarpodConfig("%(name)s",' \
+            ' "%(controller)s")' % self.__dict__
 
 class _smaractSmarpodAxisTemplate(AutoSubstitution):
     TemplateFile = 'smarpodAxis.template'
-    
+
+
 class SmaractSmarpodAxis(_smaractSmarpodAxisTemplate, Device):
     '''Smarpod axis in smaract controller'''
     TemplateFile = 'smarpodAxis.template'
     def __init__(self, name, controller, axis_number, smarpod, p, r, timeout):
-        self.__super.__init__(P=p, R=r, PORT=controller.PORT, 
+        self.__super.__init__(P=p, R=r, PORT=controller, 
                               AXIS=axis_number, TIMEOUT=timeout, name=name)
         self.__dict__.update(locals())
 
