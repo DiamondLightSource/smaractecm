@@ -27,10 +27,6 @@ smaractEcm_SRCS += smarpod.cpp
 
 # These two lines are needed for non-vxWorks builds, such as Linux
 smaract_SRCS_DEFAULT += smaractMain.c
-smaractEcm_SRCS_vxWorks += -nil-
-
-# The following adds object code from base/src/vxWorks
-smaractEcm_OBJS_vxWorks += $(EPICS_BASE_BIN)/vxComLibrary
 
 # This line says that this IOC Application depends on the
 # xxx Support Module

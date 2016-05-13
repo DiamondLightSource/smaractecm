@@ -53,23 +53,23 @@ asynStatus McsEcmAxis::move(double position, int relative,
 
 	TakeLock takeLock(controller, /*alreadyTaken=*/true);
     // Start the move
-    int a;
-    int b;
+    //// int a;
+    //// int b;
     // Get information
-    int activeHold = controller->paramActiveHold[axisNum];
+    //int activeHold = controller->paramActiveHold[axisNum];
     FreeLock freeLock(takeLock);
 
     // Perform the move
-    controller->command("SCLS", physicalAxis(), (int)maxVelocity, "E", &a, &b);
+    // controller->command("SCLS", physicalAxis(), (int)maxVelocity, "E", &a, &b);
     if(relative)
     {
         if(rotary)
         {
-            controller->command("MAR", physicalAxis(), (int)position, 0, 60000*activeHold, "E", &a, &b);
+            // controller->command("MAR", physicalAxis(), (int)position, 0, 60000*activeHold, "E", &a, &b);
         }
         else
         {
-            controller->command("MPR", physicalAxis(), (int)position, 60000*activeHold, "E", &a, &b);
+            // controller->command("MPR", physicalAxis(), (int)position, 60000*activeHold, "E", &a, &b);
         }
     }
     else
@@ -85,11 +85,11 @@ asynStatus McsEcmAxis::move(double position, int relative,
                 targetPosition += 360000000;
                 targetRevolution -= 1;
             }
-            controller->command("MAA", physicalAxis(), targetPosition, targetRevolution, 60000*activeHold, "E", &a, &b);
+            // controller->command("MAA", physicalAxis(), targetPosition, targetRevolution, 60000*activeHold, "E", &a, &b);
         }
         else
         {
-            controller->command("MPA", physicalAxis(), (int)position, 60000*activeHold, "E", &a, &b);
+            // controller->command("MPA", physicalAxis(), (int)position, 60000*activeHold, "E", &a, &b);
         }
     }
     {
@@ -101,9 +101,9 @@ asynStatus McsEcmAxis::move(double position, int relative,
     }
 
     // Wait for move to complete.  
-    int status;
+    int status = 0;
     bool moving = true;
-    while(moving && controller->command("GS", physicalAxis(), "S", &a, &status))
+    while(moving /* && controller->command("GS", physicalAxis(), "S", &a, &status)*/)
     {
         moving = !(status == 3 || status == 0);
     }
@@ -121,10 +121,10 @@ bool McsEcmAxis::onceOnlyStatus(FreeLock& freeLock)
 	if(!isConnected()) return asynSuccess;
 
     bool result = true;
-    int a;
+    // int a;
 
     // Put the axis in debug mode so we can see the sine and cosine parameters
-    result = result && controller->command("ED", physicalAxis(), 1, "E", &a);
+    result = false; // && // controller->command("ED", physicalAxis(), 1, "E", &a);
     if(result)
     {
     	TakeLock takeLock(freeLock);
@@ -156,29 +156,29 @@ bool McsEcmAxis::pollStatus(FreeLock& freeLock)
     int status;
     int cosine;
     int sine;
-    int a;
-    int b;
+    // int a;
+    // int b;
 
     if(rotary)
     {
-        result = result && controller->command("GA", physicalAxis(), "A", &a, &curPosition, &revolution);
+        result = false; // && // controller->command("GA", physicalAxis(), "A", &a, &curPosition, &revolution);
         curPosition = curPosition + 360000000*revolution;
     }
     else
     {
-        result = result && controller->command("GP", physicalAxis(), "P", &a, &curPosition);
+        result = false; // && // controller->command("GP", physicalAxis(), "P", &a, &curPosition);
     }
-    result = result && controller->command("GS", physicalAxis(), "S", &a, &status);
+    result = false; // && // controller->command("GS", physicalAxis(), "S", &a, &status);
     switch(pollPhase)
     {
     case POLLPHASE0:
-        result = result && controller->command("RDV", physicalAxis(), 22, "DP", &a, &b, &cosine);
+        result = false; // && // controller->command("RDV", physicalAxis(), 22, "DP", &a, &b, &cosine);
         break;
     case POLLPHASE1:
-        result = result && controller->command("RDV", physicalAxis(), 23, "DP", &a, &b, &sine);
+        result = false; // && // controller->command("RDV", physicalAxis(), 23, "DP", &a, &b, &sine);
         break;
     case POLLPHASE2:
-        result = result && controller->command("GPPK", physicalAxis(), "PPK", &a, &homeStatus);
+        result = false; // && // controller->command("GPPK", physicalAxis(), "PPK", &a, &homeStatus);
         break;
     }
     if(result)
@@ -246,11 +246,11 @@ asynStatus McsEcmAxis::home(double minVelocity, double maxVelocity,
 	if(!isConnected()) return asynSuccess;
 
 	TakeLock takeLock(controller, /*alreadyTake=*/true);
-    int a;
-    int b;
+    // int a;
+    // int b;
 
     // Get information
-    int activeHold = controller->paramActiveHold[axisNum];
+    // int activeHold = controller->paramActiveHold[axisNum];
 
     setIntegerParam(controller->motorStatusDone_, 0);
     setIntegerParam(controller->motorStatusMoving_, 1);
@@ -258,13 +258,13 @@ asynStatus McsEcmAxis::home(double minVelocity, double maxVelocity,
 
     // Perform the move
     FreeLock freeLock(takeLock);
-    controller->command("SCLS", physicalAxis(), (int)maxVelocity, "E", &a, &b);
-    controller->command("FRM", physicalAxis(), forwards?0:1, 60000*activeHold, 1, "E", &a, &b);
+    // controller->command("SCLS", physicalAxis(), (int)maxVelocity, "E", &a, &b);
+    // controller->command("FRM", physicalAxis(), forwards?0:1, 60000*activeHold, 1, "E", &a, &b);
     
     // Wait for move to complete.  
-    int status;
+    int status = 0;
     bool moving = true;
-    while(moving && controller->command("GS", physicalAxis(), "S", &a, &status))
+    while(moving  /*&& controller->command("GS", physicalAxis(), "S", &a, &status)*/ )
     {
         moving = !(status == 3 || status == 0);
     }
@@ -284,8 +284,8 @@ asynStatus McsEcmAxis::stop(double acceleration)
 
 	TakeLock takeLock(controller, /*alreadyTake=*/true);
 
-    int a;
-    controller->command("S", physicalAxis(), "E", &a);
+    // int a;
+    // controller->command("S", physicalAxis(), "E", &a);
 
     setIntegerParam(controller->motorStatusDone_, 1);
     setIntegerParam(controller->motorStatusMoving_, 0);
@@ -301,10 +301,10 @@ asynStatus McsEcmAxis::setPosition(double position)
 	// If axis not connected to a physical address, do nothing
 	if(!isConnected()) return asynSuccess;
 
-    int a;
-    int b;
+    // int a;
+    // int b;
 
-    controller->command("SP", physicalAxis(), (int)position, "E", &a, &b);
+    // controller->command("SP", physicalAxis(), (int)position, "E", &a, &b);
     return asynSuccess;
 }
 
@@ -319,9 +319,9 @@ void McsEcmAxis::calibrateSensor(TakeLock& takeLock, int yes)
     int oldYes = controller->paramCalibrateSensor[axisNum];
     if(oldYes == 0 && yes == 1)
     {
-        int a;
-        int b;
-        controller->command("CS", physicalAxis(), "E", &a, &b);
+        // int a;
+        // int b;
+        // controller->command("CS", physicalAxis(), "E", &a, &b);
     }
 }
 

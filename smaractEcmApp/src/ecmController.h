@@ -16,21 +16,31 @@
 #include "DoubleParam.h"
 #include "EnumParam.h"
 
-class EcmController : public asynMotorController
+class EcmController: public asynMotorController
 {
-	// need to be friends with the derived classes of base smaractAxis
-	// but otherwise mcsController only knows about the base
-    friend class McsEcmAxis;
+    // need to be friends with the derived classes of base smaractAxis
+    // but otherwise mcsController only knows about the base
     friend class SmarpodAxis;
+    friend class McsEcmAxis;
+    friend class Smarpod;
 
 private:
     // Constants
-    enum {RXBUFFERSIZE=200, TXBUFFERSIZE=200, RESBUFFERSIZE=30, CONNECTIONPOLL=10};
+    enum
+    {
+        RXBUFFERSIZE = 200,
+        TXBUFFERSIZE = 200,
+        RESBUFFERSIZE = 30,
+        CONNECTIONPOLL = 10
+    };
 public:
-    enum {NOAXIS=-1};
+    enum
+    {
+        NOAXIS = -1
+    };
 public:
-    EcmController(const char *portName, int controllerNum,
-            const char* serialPortName, int serialPortAddress, int numAxes,
+    EcmController(const char *portName,
+            const char* commPortName, int commPortAddress, int numAxes,
             double movingPollPeriod, double idlePollPeriod);
     virtual ~EcmController();
 
@@ -73,29 +83,21 @@ public:
 
 private:
     /* Data */
-    asynUser* serialPortUser;
+    asynUser* commPortUser;
     int controllerNum;
     int connectionPollRequired;
 
 private:
     /* Methods for use by the axes */
-    bool sendReceive(const char* tx, const char* txTerminator,
-            char* rx, size_t rxSize, const char* rxTerminator);
-    bool command(const char* cmd, const char* rsp, int* a, int* b, int*c);
-    bool command(const char* cmd, int p, int q, const char* rsp, int* a, int* b, int*c);
-    bool command(const char* cmd, const char* rsp, int* a);
-    bool command(const char* cmd, int p, const char* rsp, int* a);
-    bool command(const char* cmd, int p, int q, const char* rsp, int* a);
-    bool command(const char* cmd, int p, const char* rsp, int* a, int* b);
-    bool command(const char* cmd, int p, const char* rsp, int* a, int* b, int* c);
-    bool command(const char* cmd, int p, int q, const char* rsp, int* a, int* b);
-    bool command(const char* cmd, int p, int q, int r, const char* rsp, int* a, int* b);
-    bool command(const char* cmd, int p, int q, int r, int s, const char* rsp, int* a, int* b);
+    bool sendReceive(const char* tx, const char* txTerminator, char* rx,
+            size_t rxSize, const char* rxTerminator);
+    bool command(const char* cmd, double inputs[], int inputCount,
+            double outputs[], int outputCount);
     /* Parameter notification methods */
     void onCalibrateSensor(TakeLock& takeLock, int list, int value);
     void onPowerSave(TakeLock& takeLock, int list, int value);
     void onPhysAxisChange(TakeLock& takeLock, int list, int value);
+    int parseReturnCode(const char* rxbuffer);
 };
-
 
 #endif /* ECMCONTROLLER_H_ */

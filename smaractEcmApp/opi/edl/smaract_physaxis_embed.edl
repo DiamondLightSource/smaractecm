@@ -1,0 +1,140 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 536
+y 776
+w 475
+h 161
+font "arial-medium-r-10.0"
+ctlFont "arial-medium-r-10.0"
+btnFont "arial-medium-r-10.0"
+fgColor index 14
+bgColor index 3
+textColor index 14
+ctlFgColor1 index 14
+ctlFgColor2 index 0
+ctlBgColor1 index 0
+ctlBgColor2 index 14
+topShadowColor index 0
+botShadowColor index 14
+showGrid
+snapToGrid
+gridSize 5
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 0
+w 285
+h 40
+lineColor index 14
+fill
+fillColor index 15
+visPv "$(axis):CONNECTED"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 0
+w 285
+h 40
+lineColor index 14
+fill
+fillColor index 20
+visPv "$(axis):CONNECTED"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Textupdate)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 240
+y 5
+w 40
+h 30
+controlPv "$(axis):PHYSAXIS_RBV"
+fgColor index 15
+bgColor index 10
+fill
+font "arial-bold-r-14.0"
+fontAlign "center"
+endObjectProperties
+
+# (Textupdate)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 5
+y 5
+w 185
+h 30
+controlPv "$(axis).DESC"
+fgColor index 15
+bgColor index 10
+fill
+font "arial-bold-r-14.0"
+fontAlign "center"
+endObjectProperties
+
+# (Textentry)
+object TextentryClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 195
+y 5
+w 40
+h 30
+controlPv "$(axis):PHYSAXIS"
+displayMode "decimal"
+fgColor index 25
+bgColor index 3
+font "arial-bold-r-14.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 240
+y 5
+w 40
+h 30
+font "arial-bold-r-18.0"
+fontAlign "center"
+fgColor index 20
+bgColor index 9
+visPv "$(axis):CONNECTED"
+visMin "0"
+visMax "1"
+value {
+  "    X    "
+}
+border
+endObjectProperties
+

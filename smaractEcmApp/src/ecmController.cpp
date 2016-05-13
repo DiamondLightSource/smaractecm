@@ -6,6 +6,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <iostream>
 #include <epicsThread.h>
@@ -25,14 +26,14 @@
 /** Constructor
  * \param[in] portName Asyn port name
  * \param[in] controllerNum The number (address) of the controller in the protocol
- * \param[in] serialPortName Asyn port name of the serial port
- * \param[in] serialPortAddress Asyn address of the serial port (usually 0)
+ * \param[in] commPortName Asyn port name of the comm port
+ * \param[in] commPortAddress Asyn address of the comm port (usually 0)
  * \param[in] numAxes Maximum number of axes
  * \param[in] movingPollPeriod The period at which to poll position while moving
  * \param[in] idlePollPeriod The period at which to poll position while not moving
  */
-EcmController::EcmController(const char* portName, int controllerNum,
-        const char* serialPortName, int serialPortAddress, int numAxes,
+EcmController::EcmController(const char* portName,
+        const char* commPortName, int commPortAddress, int numAxes,
         double movingPollPeriod, double idlePollPeriod)
 : asynMotorController(portName, numAxes, /*numParams=*/50,
 		/*interfaceMask=*/0, /*interruptMask=*/0,
@@ -73,12 +74,12 @@ EcmController::EcmController(const char* portName, int controllerNum,
 , controllerNum(controllerNum)
 , connectionPollRequired(0)
 {
-    // Connect to the serial port
-    if(pasynOctetSyncIO->connect(serialPortName, serialPortAddress,
-            &serialPortUser, NULL) != asynSuccess)
+    // Connect to the comm port
+    if(pasynOctetSyncIO->connect(commPortName, commPortAddress,
+            &commPortUser, NULL) != asynSuccess)
     {
-        printf("ecmController: Failed to connect to serial port %s\n",
-                serialPortName);
+        printf("ecmController: Failed to connect to comm port %s\n",
+                commPortName);
     }
 
     // Create the poller thread
@@ -133,16 +134,18 @@ asynStatus EcmController::poll()
     }
     else
     {
-        // Are we connected yet?
+ /*
+         // Are we connected yet?
         bool ok = true;
         int verHigh;
         int verLow;
         int verBuild;
         int sysId;
-        ok = ok && command("GIV", "IV", &verHigh, &verLow, &verBuild);
+
+        // ok = ok && command("GIV", "IV", &verHigh, &verLow, &verBuild);
         if(ok)
         {
-            ok = ok && command("GSI", "ID", &sysId);
+            // ok = ok && command("GSI", "ID", &sysId);
             // Perform once only poll on the axes
             for(int i=0; i<numAxes_; i++)
             {
@@ -163,6 +166,7 @@ asynStatus EcmController::poll()
                 paramConnected = true;
             }
         }
+*/
     }
     return asynSuccess;
 }
@@ -179,18 +183,18 @@ bool EcmController::sendReceive(const char* tx, const char* txTerminator,
 #if DEBUG
     printf("Tx> %s\n", tx);
 #endif
-    pasynOctetSyncIO->flush(serialPortUser);
-    pasynOctetSyncIO->setInputEos(serialPortUser, rxTerminator, strlen(rxTerminator));
-    pasynOctetSyncIO->setOutputEos(serialPortUser, txTerminator, strlen(txTerminator));
-    asynStatus result = pasynOctetSyncIO->writeRead(serialPortUser, tx, strlen(tx),
+    pasynOctetSyncIO->flush(commPortUser);
+    pasynOctetSyncIO->setInputEos(commPortUser, rxTerminator, strlen(rxTerminator));
+    pasynOctetSyncIO->setOutputEos(commPortUser, txTerminator, strlen(txTerminator));
+    asynStatus result = pasynOctetSyncIO->writeRead(commPortUser, tx, strlen(tx),
             rx, rxSize, /*timeout=*/1.0, &bytesOut, &bytesIn, &eomReason);
     // JAT: I obviously had some trouble with the reliability of the comms but this
     //      retry solution is now causing problems.  So I've removed the retry and
     //      extended the timeout of the first writeRead from 0.1 seconds.
     //if(result != asynSuccess)
     //{
-    //    pasynOctetSyncIO->flush(serialPortUser);
-    //    result = pasynOctetSyncIO->writeRead(serialPortUser, tx, strlen(tx),
+    //    pasynOctetSyncIO->flush(commPortUser);
+    //    result = pasynOctetSyncIO->writeRead(commPortUser, tx, strlen(tx),
     //            rx, rxSize, /*timeout=*/0.1, &bytesOut, &bytesIn, &eomReason);
     //}
 #if DEBUG
@@ -199,288 +203,98 @@ bool EcmController::sendReceive(const char* tx, const char* txTerminator,
     return result == asynSuccess;
 }
 
-/** Transmits a command to the controller
- * \param[in] cmd The command code to send
- * \param[in] rsp The response code to expect
- * \param[out] a The first result integer
- * \param[out] b The second result integer
- * \param[out] c The third result integer
- * \return Returns true for success
+/** parses the return from a command to determine if it contains a
+ * result code
+ * \param[in] rxbuffer the response from the controllerers
+ * \return Returns result code or 0 if there is no result code
  */
-bool EcmController::command(const char* cmd, const char* rsp, int* a, int* b, int* c)
+int EcmController::parseReturnCode(const char* rxbuffer)
 {
-    char txBuffer[TXBUFFERSIZE];
-    char rxBuffer[RXBUFFERSIZE];
-    char rxFormat[RXBUFFERSIZE];
-    bool result = false;
-    sprintf(txBuffer, ":%s", cmd);
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
-    rxBuffer[RXBUFFERSIZE-1] = '\0';
-    if(result)
+    int result = 0;
+
+    if(rxbuffer[0] == '!')
     {
-        sprintf(rxFormat, ":%s%%d,%%d,%%d", rsp);
-        result = sscanf(rxBuffer, rxFormat, a, b, c) == 3;
+        result=atoi(rxbuffer+1);
     }
+
     return result;
 }
 
 /** Transmits a command to the controller
+ *   This function handles commands with floating point inputs and outputs
  * \param[in] cmd The command code to send
- * \param[in] p The first parameter integer
- * \param[in] q The second parameter integer
- * \param[in] rsp The response code to expect
- * \param[out] a The first result integer
- * \param[out] b The second result integer
+ * \param[in] inputs The parameters to the command
+ * \param[in] inputCount number of command parameters
+ * \param[out] outputs floating point results buffer
+ * \param[out] outputCount size of above and expected no. of outputs
  * \return Returns true for success
  */
-bool EcmController::command(const char* cmd, int p, int q, const char* rsp, int* a, int* b)
+bool EcmController::command(const char* cmd, double inputs[], int inputCount, double outputs[], int outputCount)
 {
     char txBuffer[TXBUFFERSIZE];
     char rxBuffer[RXBUFFERSIZE];
-    char rxFormat[RXBUFFERSIZE];
     bool result = false;
-    sprintf(txBuffer, ":%s%d,%d", cmd, p, q);
+
+    snprintf(txBuffer, TXBUFFERSIZE, "%s ", cmd);
+    for(int i = 0; i<inputCount; i++)
+    {
+        snprintf(txBuffer, TXBUFFERSIZE, "%s %f", txBuffer, inputs[i]);
+    }
     result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
     rxBuffer[RXBUFFERSIZE-1] = '\0';
+
     if(result)
     {
-        sprintf(rxFormat, ":%s%%d,%%d", rsp);
-        result = sscanf(rxBuffer, rxFormat, a, b) == 2;
+        int returnCode = parseReturnCode(rxBuffer);
+        if(returnCode != 0)
+        {
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                  "EcmController::command Error %d returned from command: %s\n",
+                  returnCode, txBuffer);
+            result = false;
+        }
     }
-    return result;
-}
 
-/** Transmits a command to the controller
- * \param[in] cmd The command code to send
- * \param[in] p The first parameter integer
- * \param[in] q The second parameter integer
- * \param[in] rsp The response code to expect
- * \param[out] a The first result integer
- * \param[out] b The second result integer
- * \param[out] c The third result integer
- * \return Returns true for success
- */
-bool EcmController::command(const char* cmd, int p, int q, const char* rsp, int* a, int* b, int*c)
-{
-    char txBuffer[TXBUFFERSIZE];
-    char rxBuffer[RXBUFFERSIZE];
-    char rxFormat[RXBUFFERSIZE];
-    bool result = false;
-    sprintf(txBuffer, ":%s%d,%d", cmd, p, q);
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
-    rxBuffer[RXBUFFERSIZE-1] = '\0';
     if(result)
     {
-        sprintf(rxFormat, ":%s%%d,%%d,%%d", rsp);
-        result = sscanf(rxBuffer, rxFormat, a, b, c) == 3;
+        int count = 0;
+        char* p = rxBuffer;
+        while(p < rxBuffer+RXBUFFERSIZE && count < outputCount)
+        {
+            char* end;
+            outputs[count] = strtof(p, &end);
+            if(end == p)
+                break;
+
+            p = end;
+        }
+        result = (count == outputCount);
     }
-    return result;
-}
-
-/** Transmits a command to the controller
- * \param[in] cmd The command code to send
- * \param[in] p The first parameter integer
- * \param[in] q The second parameter integer
- * \param[in] r The third parameter integer
- * \param[in] rsp The response code to expect
- * \param[out] a The first result integer
- * \param[out] b The second result integer
- * \return Returns true for success
- */
-bool EcmController::command(const char* cmd, int p, int q, int r, const char* rsp, int* a, int* b)
-{
-    char txBuffer[TXBUFFERSIZE];
-    char rxBuffer[RXBUFFERSIZE];
-    char rxFormat[RXBUFFERSIZE];
-    bool result = false;
-    sprintf(txBuffer, ":%s%d,%d,%d", cmd, p, q, r);
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
-    rxBuffer[RXBUFFERSIZE-1] = '\0';
-    if(result)
-    {
-        sprintf(rxFormat, ":%s%%d,%%d", rsp);
-        result = sscanf(rxBuffer, rxFormat, a, b) == 2;
-    }
-    return result;
-}
-
-/** Transmits a command to the controller
- * \param[in] cmd The command code to send
- * \param[in] p The first parameter integer
- * \param[in] q The second parameter integer
- * \param[in] r The third parameter integer
- * \param[in] s The fourth parameter integer
- * \param[in] rsp The response code to expect
- * \param[out] a The first result integer
- * \param[out] b The second result integer
- * \return Returns true for success
- */
-bool EcmController::command(const char* cmd, int p, int q, int r, int s, const char* rsp, int* a, int* b)
-{
-    char txBuffer[TXBUFFERSIZE];
-    char rxBuffer[RXBUFFERSIZE];
-    char rxFormat[RXBUFFERSIZE];
-    bool result = false;
-    sprintf(txBuffer, ":%s%d,%d,%d,%d", cmd, p, q, r, s);
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
-    rxBuffer[RXBUFFERSIZE-1] = '\0';
-    if(result)
-    {
-        sprintf(rxFormat, ":%s%%d,%%d", rsp);
-        result = sscanf(rxBuffer, rxFormat, a, b) == 2;
-    }
-    return result;
-}
-
-/** Transmits a command to the controller
- * \param[in] cmd The command code to send
- * \param[in] rsp The response code to expect
- * \param[out] a The first result integer
- * \return Returns true for success
- */
-bool EcmController::command(const char* cmd, const char* rsp, int* a)
-{
-    char txBuffer[TXBUFFERSIZE];
-    char rxBuffer[RXBUFFERSIZE];
-    char rxFormat[RXBUFFERSIZE];
-    bool result = false;
-    sprintf(txBuffer, ":%s", cmd);
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
-    rxBuffer[RXBUFFERSIZE-1] = '\0';
-    if(result)
-    {
-        sprintf(rxFormat, ":%s%%d", rsp);
-        result = sscanf(rxBuffer, rxFormat, a) == 1;
-    }
-    return result;
-}
-
-/** Transmits a command to the controller
- * \param[in] cmd The command code to send
- * \param[in] p The first parameter integer
- * \param[in] rsp The response code to expect
- * \param[out] a The first result integer
- * \return Returns true for success
- */
-bool EcmController::command(const char* cmd, int p, const char* rsp, int* a)
-{
-    char txBuffer[TXBUFFERSIZE];
-    char rxBuffer[RXBUFFERSIZE];
-    char rxFormat[RXBUFFERSIZE];
-    bool result = false;
-    sprintf(txBuffer, ":%s%d", cmd, p);
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
-    rxBuffer[RXBUFFERSIZE-1] = '\0';
-    if(result)
-    {
-        sprintf(rxFormat, ":%s%%d", rsp);
-        result = sscanf(rxBuffer, rxFormat, a) == 1;
-    }
-    return result;
-}
-
-/** Transmits a command to the controller
- * \param[in] cmd The command code to send
- * \param[in] p The first parameter integer
- * \param[in] q The second parameter integer
- * \param[in] rsp The response code to expect
- * \param[out] a The first result integer
- * \return Returns true for success
- */
-bool EcmController::command(const char* cmd, int p, int q, const char* rsp, int* a)
-{
-    char txBuffer[TXBUFFERSIZE];
-    char rxBuffer[RXBUFFERSIZE];
-    char rxFormat[RXBUFFERSIZE];
-    bool result = false;
-    sprintf(txBuffer, ":%s%d,%d", cmd, p, q);
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
-    rxBuffer[RXBUFFERSIZE-1] = '\0';
-    if(result)
-    {
-        sprintf(rxFormat, ":%s%%d", rsp);
-        result = sscanf(rxBuffer, rxFormat, a) == 1;
-    }
-    return result;
-}
-
-/** Transmits a command to the controller
- * \param[in] cmd The command code to send
- * \param[in] p The first parameter integer
- * \param[in] rsp The response code to expect
- * \param[out] a The first result integer
- * \param[out] b The second result integer
- * \return Returns true for success
- */
-bool EcmController::command(const char* cmd, int p, const char* rsp, int* a, int* b)
-{
-    char txBuffer[TXBUFFERSIZE];
-    char rxBuffer[RXBUFFERSIZE];
-    char rxFormat[RXBUFFERSIZE];
-    bool result = false;
-    sprintf(txBuffer, ":%s%d", cmd, p);
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
-    rxBuffer[RXBUFFERSIZE-1] = '\0';
-    if(result)
-    {
-        sprintf(rxFormat, ":%s%%d,%%d", rsp);
-        result = sscanf(rxBuffer, rxFormat, a, b) == 2;
-    }
-    return result;
-}
-
-/** Transmits a command to the controller
- * \param[in] cmd The command code to send
- * \param[in] p The first parameter integer
- * \param[in] rsp The response code to expect
- * \param[out] a The first result integer
- * \param[out] b The second result integer
- * \param[out] c The third result integer
- * \return Returns true for success
- */
-bool EcmController::command(const char* cmd, int p, const char* rsp, int* a, int* b, int*c)
-{
-    char txBuffer[TXBUFFERSIZE];
-    char rxBuffer[RXBUFFERSIZE];
-    char rxFormat[RXBUFFERSIZE];
-    bool result = false;
-    sprintf(txBuffer, ":%s%d", cmd, p);
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
-    rxBuffer[RXBUFFERSIZE-1] = '\0';
-    if(result)
-    {
-        sprintf(rxFormat, ":%s%%d,%%d,%%d", rsp);
-        result = sscanf(rxBuffer, rxFormat, a, b, c) == 3;
-    }
-    return result;
-}
-
-/** An integer parameter has been written
- * \param[in] pasynUser Handle of the user writing the paramter
- * \param[in] value The value written
- */
-asynStatus EcmController::writeInt32(asynUser *pasynUser, epicsInt32 value)
-{
-	TakeLock takeLock(this, /*alreadyTaken=*/true);
-
-	// Base class
-    asynStatus result = asynMotorController::writeInt32(pasynUser, value);
-
-    // Delegate to param controller object
-    asynParams.writeInt32(takeLock, pasynUser, value);
-
     return result;
 }
 
 asynStatus EcmController::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
 {
-	TakeLock takeLock(this, /*alreadyTaken=*/true);
+    TakeLock takeLock(this, /*alreadyTaken=*/true);
 
-	// Base class
+    // Base class
     asynStatus result = asynMotorController::writeFloat64(pasynUser, value);
 
     // Delegate to param controller object
     asynParams.writeFloat64(takeLock, pasynUser, value);
+
+    return result;
+}
+
+asynStatus EcmController::writeInt32(asynUser *pasynUser, epicsInt32 value)
+{
+    TakeLock takeLock(this, /*alreadyTaken=*/true);
+
+    // Base class
+    asynStatus result = asynMotorController::writeInt32(pasynUser, value);
+
+    // Delegate to param controller object
+    asynParams.writeInt32(takeLock, pasynUser, value);
 
     return result;
 }
@@ -533,7 +347,7 @@ void EcmController::onCalibrateSensor(TakeLock& takeLock, int list, int value)
 void EcmController::onPowerSave(TakeLock& takeLock, int list, int value)
 {
     // Change the sensor power save mode of the controller
-    int a;
-    int b;
-    this->command("SSE", value ? 2 : 1, "E", &a, &b);
+    // int a;
+    // int b;
+    // this->command("SSE", value ? 2 : 1, "E", &a, &b);
 }

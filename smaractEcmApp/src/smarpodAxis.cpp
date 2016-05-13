@@ -29,36 +29,41 @@ SmarpodAxis::~SmarpodAxis()
 asynStatus SmarpodAxis::move(double position, int relative, double minVelocity,
         double maxVelocity, double acceleration)
 {
-    return smarpod->move(axisNum, position, relative, minVelocity,
+    bool result;
+
+    result = smarpod->move(axisNum, position, relative, minVelocity,
             maxVelocity, acceleration);
+
+    return result ? asynSuccess : asynError;
 }
 
 /** Get status from the controller that does not change.
  */
 bool SmarpodAxis::onceOnlyStatus(FreeLock& freeLock)
 {
-    // If axis not connected to a physical address, do nothing
-    if (!isConnected())
-        return asynSuccess;
-
-    bool result = true;
-    int a;
-
-    // Put the axis in debug mode so we can see the sine and cosine parameters
-    result = result && controller->command("ED", physicalAxis(), 1, "E", &a);
-    if (result)
-    {
-        TakeLock takeLock(freeLock);
-        setIntegerParam(controller->motorStatusHighLimit_, 0);
-        setIntegerParam(controller->motorStatusLowLimit_, 0);
-        setIntegerParam(controller->motorStatusHasEncoder_, 0);
-        setDoubleParam(controller->motorVelocity_, 0.0);
-        setIntegerParam(controller->motorStatusSlip_, 0);
-        setIntegerParam(controller->motorStatusCommsError_, 0);
-        setIntegerParam(controller->motorStatusFollowingError_, 0);
-        setIntegerParam(controller->motorStatusProblem_, 0);
-    }
-    return result;
+//    // If axis not connected to a physical address, do nothing
+//    if (!isConnected())
+//        return asynSuccess;
+//
+//    bool result = true;
+//    int a;
+//
+//    // Put the axis in debug mode so we can see the sine and cosine parameters
+//    result = result && controller->command("ED", physicalAxis(), 1, "E", &a);
+//    if (result)
+//    {
+//        TakeLock takeLock(freeLock);
+//        setIntegerParam(controller->motorStatusHighLimit_, 0);
+//        setIntegerParam(controller->motorStatusLowLimit_, 0);
+//        setIntegerParam(controller->motorStatusHasEncoder_, 0);
+//        setDoubleParam(controller->motorVelocity_, 0.0);
+//        setIntegerParam(controller->motorStatusSlip_, 0);
+//        setIntegerParam(controller->motorStatusCommsError_, 0);
+//        setIntegerParam(controller->motorStatusFollowingError_, 0);
+//        setIntegerParam(controller->motorStatusProblem_, 0);
+//    }
+//    return result;
+    return true;
 }
 
 /** Get status from the controller that needs polling frequently.
@@ -75,24 +80,10 @@ bool SmarpodAxis::pollStatus(FreeLock& freeLock)
     int curPosition;
     int homeStatus;
     int status;
-    int cosine;
-    int sine;
-    int a;
-    int b;
 
-    result = result
-            && controller->command("GP", physicalAxis(), "P", &a, &curPosition);
-    result = result
-            && controller->command("GS", physicalAxis(), "S", &a, &status);
-    result = result
-            && controller->command("RDV", physicalAxis(), 22, "DP", &a, &b,
-                    &cosine);
-    result = result
-            && controller->command("RDV", physicalAxis(), 23, "DP", &a, &b,
-                    &sine);
-    result = result
-            && controller->command("GPPK", physicalAxis(), "PPK", &a,
-                    &homeStatus);
+    result = smarpod->getPosition(axisNum, &curPosition);
+    result &= smarpod->getStatus(axisNum, &status);
+    result &= smarpod->getHomeStatus(axisNum, &homeStatus);
 
     if (result)
     {
@@ -104,8 +95,6 @@ bool SmarpodAxis::pollStatus(FreeLock& freeLock)
         setIntegerParam(controller->motorStatusMoving_,
                 !(status == 3 || status == 0));
 
-        controller->paramCosine[axisNum] = cosine;
-        controller->paramSine[axisNum] = sine;
         controller->paramMotorStatusHomed[axisNum] = homeStatus != 0;
 
         this->callParamCallbacks();
@@ -122,7 +111,8 @@ bool SmarpodAxis::pollStatus(FreeLock& freeLock)
 asynStatus SmarpodAxis::moveVelocity(double minVelocity, double maxVelocity,
         double acceleration)
 {
-    return asynSuccess;
+    // Jog not supported
+    return asynError;
 }
 
 /** Home axis command.  Entered with the lock taken
@@ -134,38 +124,38 @@ asynStatus SmarpodAxis::moveVelocity(double minVelocity, double maxVelocity,
 asynStatus SmarpodAxis::home(double minVelocity, double maxVelocity,
         double acceleration, int forwards)
 {
-    // If axis not connected to a physical address, do nothing
-    if (!isConnected())
-        return asynSuccess;
-
-    TakeLock takeLock(controller, /*alreadyTake=*/true);
-    int a;
-    int b;
-
-    // Get information
-    int activeHold = controller->paramActiveHold[axisNum];
-
-    setIntegerParam(controller->motorStatusDone_, 0);
-    setIntegerParam(controller->motorStatusMoving_, 1);
-    setIntegerParam(controller->motorStatusDirection_, forwards);
-
-    // Perform the move
-    FreeLock freeLock(takeLock);
-    controller->command("SCLS", physicalAxis(), (int) maxVelocity, "E", &a, &b);
-    controller->command("FRM", physicalAxis(), forwards ? 0 : 1,
-            60000 * activeHold, 1, "E", &a, &b);
-
-    // Wait for move to complete.
-    int status;
-    bool moving = true;
-    while (moving && controller->command("GS", physicalAxis(), "S", &a, &status))
-    {
-        moving = !(status == 3 || status == 0);
-    }
-
-    // Do a poll now
-    pollStatus(freeLock);
-    return asynSuccess;
+//    // If axis not connected to a physical address, do nothing
+//    if (!isConnected())
+//        return asynSuccess;
+//
+//    TakeLock takeLock(controller, /*alreadyTake=*/true);
+//    int a;
+//    int b;
+//
+//    // Get information
+//    int activeHold = controller->paramActiveHold[axisNum];
+//
+//    setIntegerParam(controller->motorStatusDone_, 0);
+//    setIntegerParam(controller->motorStatusMoving_, 1);
+//    setIntegerParam(controller->motorStatusDirection_, forwards);
+//
+//    // Perform the move
+//    FreeLock freeLock(takeLock);
+//    controller->command("SCLS", physicalAxis(), (int) maxVelocity, "E", &a, &b);
+//    controller->command("FRM", physicalAxis(), forwards ? 0 : 1,
+//            60000 * activeHold, 1, "E", &a, &b);
+//
+//    // Wait for move to complete.
+//    int status;
+//    bool moving = true;
+//    while (moving && controller->command("GS", physicalAxis(), "S", &a, &status))
+//    {
+//        moving = !(status == 3 || status == 0);
+//    }
+//
+//    // Do a poll now
+//    pollStatus(freeLock);
+      return asynSuccess;
 }
 
 /** Stop axis command.  Entered with the lock taken.
@@ -173,17 +163,17 @@ asynStatus SmarpodAxis::home(double minVelocity, double maxVelocity,
  */
 asynStatus SmarpodAxis::stop(double acceleration)
 {
-    // If axis not connected to a physical address, do nothing
-    if (!isConnected())
-        return asynSuccess;
-
-    TakeLock takeLock(controller, /*alreadyTake=*/true);
-
-    int a;
-    controller->command("S", physicalAxis(), "E", &a);
-
-    setIntegerParam(controller->motorStatusDone_, 1);
-    setIntegerParam(controller->motorStatusMoving_, 0);
+//    // If axis not connected to a physical address, do nothing
+//    if (!isConnected())
+//        return asynSuccess;
+//
+//    TakeLock takeLock(controller, /*alreadyTake=*/true);
+//
+//    int a;
+//    controller->command("S", physicalAxis(), "E", &a);
+//
+//    setIntegerParam(controller->motorStatusDone_, 1);
+//    setIntegerParam(controller->motorStatusMoving_, 0);
 
     return asynSuccess;
 }
@@ -193,15 +183,8 @@ asynStatus SmarpodAxis::stop(double acceleration)
  */
 asynStatus SmarpodAxis::setPosition(double position)
 {
-    // If axis not connected to a physical address, do nothing
-    if (!isConnected())
-        return asynSuccess;
-
-    int a;
-    int b;
-
-    controller->command("SP", physicalAxis(), (int) position, "E", &a, &b);
-    return asynSuccess;
+    // this is not possible for individual axis
+    return asynError;
 }
 
 /** Calibrate the sensor attached to this channel.
@@ -209,16 +192,16 @@ asynStatus SmarpodAxis::setPosition(double position)
  */
 void SmarpodAxis::calibrateSensor(TakeLock& takeLock, int yes)
 {
-    // If axis not connected to a physical address, do nothing
-    if (!isConnected())
-        return;
-
-    int oldYes = controller->paramCalibrateSensor[axisNum];
-    if (oldYes == 0 && yes == 1)
-    {
-        int a;
-        int b;
-        controller->command("CS", physicalAxis(), "E", &a, &b);
-    }
+//    // If axis not connected to a physical address, do nothing
+//    if (!isConnected())
+//        return;
+//
+//    int oldYes = controller->paramCalibrateSensor[axisNum];
+//    if (oldYes == 0 && yes == 1)
+//    {
+//        int a;
+//        int b;
+//        controller->command("CS", physicalAxis(), "E", &a, &b);
+//    }
 }
 

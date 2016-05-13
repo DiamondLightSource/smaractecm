@@ -1,0 +1,64 @@
+# smaractEcm.template
+# Smaract controller extensions
+#
+# Parameters:
+# % macro,  P,       EPICS name prefix
+# % macro,  R,       EPICS name suffix
+# % macro,  PORT,    Asyn port
+# % macro,  TIMEOUT, Timeout
+# % gui,    $(PORT),  edmembed, smaractcontroller_embed.edl, P=$(P),R=$(R)
+record(longin, "$(P)$(R):VERSIONHI")
+{
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(VAL,  "0")
+    field(INP,  "@asyn($(PORT),0,$(TIMEOUT))VERSION_HIGH")
+}
+
+record(longin, "$(P)$(R):VERSIONLO")
+{
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(VAL,  "0")
+    field(INP,  "@asyn($(PORT),0,$(TIMEOUT))VERSION_LOW")
+}
+
+record(longin, "$(P)$(R):VERSIONBUILD")
+{
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(VAL,  "0")
+    field(INP,  "@asyn($(PORT),0,$(TIMEOUT))VERSION_BUILD")
+}
+
+record(longin, "$(P)$(R):SYSTEMID")
+{
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(VAL,  "0")
+    field(INP,  "@asyn($(PORT),0,$(TIMEOUT))SYSTEM_ID")
+}
+
+record(bi, "$(P)$(R):CONNECTED")
+{
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(VAL,  "0")
+    field(INP,  "@asyn($(PORT),0,$(TIMEOUT))CONNECTED")
+    field(ZNAM, "Disconnected")
+    field(ONAM, "Connected")
+}
+
+#% archiver 10 Monitor
+#% autosave 1 VAL
+record(bo, "$(P)$(R):POWERSAVE")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "asynInt32")
+    field(VAL,  "0")
+    field(OUT,  "@asyn($(PORT),0,$(TIMEOUT))POWER_SAVE")
+    field(PINI, "1")
+    field(ZNAM, "Off")
+    field(ONAM, "On")
+}
+
