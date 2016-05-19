@@ -17,11 +17,13 @@
 #include "FreeLock.h"
 #define DEBUG 0
 
+#define info_header_len 19  // used to remove "Versions:\n " from %info target
+
 /*******************************************************************************
-*
-*   The PMC381 controller class
-*
-*******************************************************************************/
+ *
+ *   The PMC381 controller class
+ *
+ *******************************************************************************/
 
 /** Constructor
  * \param[in] portName Asyn port name
@@ -32,51 +34,48 @@
  * \param[in] movingPollPeriod The period at which to poll position while moving
  * \param[in] idlePollPeriod The period at which to poll position while not moving
  */
-EcmController::EcmController(const char* portName,
-        const char* commPortName, int commPortAddress, int numAxes,
-        double movingPollPeriod, double idlePollPeriod)
-: asynMotorController(portName, numAxes, /*numParams=*/50,
-		/*interfaceMask=*/0, /*interruptMask=*/0,
-		/*asynFlags=*/ASYN_MULTIDEVICE | ASYN_CANBLOCK, /*autoConnect=*/1,
-		/*priority=*/0, /*stackSize=*/0)
-, asynParams(this)
+EcmController::EcmController(const char* portName, const char* commPortName,
+        int commPortAddress, int numAxes, double movingPollPeriod,
+        double idlePollPeriod) :
+        asynMotorController(portName, numAxes, /*numParams=*/50,
+        /*interfaceMask=*/0, /*interruptMask=*/0,
+        /*asynFlags=*/ASYN_MULTIDEVICE | ASYN_CANBLOCK, /*autoConnect=*/1,
+        /*priority=*/0, /*stackSize=*/0), asynParams(this)
 // New Parameters
-, paramVersionHigh(&asynParams, "VERSION_HIGH", 0)
-, paramVersionLow(&asynParams, "VERSION_LOW", 0)
-, paramVersionBuild(&asynParams, "VERSION_BUILD", 0)
-, paramConnected(&asynParams, "CONNECTED", false)
-, paramSystemId(&asynParams, "SYSTEM_ID", 0)
-, paramActiveHold(&asynParams, "ACTIVE_HOLD", 0)
-, paramCalibrateSensor(&asynParams, "CALIBRATE_SENSOR", 0,
-		new IntegerParam::Notify<EcmController>(this, &EcmController::onCalibrateSensor))
-, paramSine(&asynParams, "SINE", 0)
-, paramCosine(&asynParams, "COSINE", 0)
-, paramPowerSave(&asynParams, "POWER_SAVE", 0,
-		new IntegerParam::Notify<EcmController>(this, &EcmController::onPowerSave))
-, paramPhysAxis(&asynParams, "PHYS_AXIS",
-		new IntegerParam::Notify<EcmController>(this, &EcmController::onPhysAxisChange))
-, paramAxisConnected(&asynParams, "AXIS_CONNECTED")
+                , paramVersion(&asynParams, "VERSION", ""), paramConnected(
+                &asynParams, "CONNECTED", false), paramSystemId(&asynParams,
+                "SYSTEM_ID", 0), paramActiveHold(&asynParams, "ACTIVE_HOLD", 0), paramCalibrateSensor(
+                &asynParams, "CALIBRATE_SENSOR", 0,
+                new IntegerParam::Notify<EcmController>(this,
+                        &EcmController::onCalibrateSensor)), paramSine(
+                &asynParams, "SINE", 0), paramCosine(&asynParams, "COSINE", 0), paramPowerSave(
+                &asynParams, "POWER_SAVE", 0,
+                new IntegerParam::Notify<EcmController>(this,
+                        &EcmController::onPowerSave)), paramPhysAxis(
+                &asynParams, "PHYS_AXIS",
+                new IntegerParam::Notify<EcmController>(this,
+                        &EcmController::onPhysAxisChange)), paramAxisConnected(
+                &asynParams, "AXIS_CONNECTED")
 // Existing (Base Class) Parameters
-, paramMotorStatusDone(&asynParams, motorStatusDone_)
-, paramMotorStatusMoving(&asynParams, motorStatusMoving_)
-, paramMotorStatusDirection(&asynParams, motorStatusDirection_)
-, paramMotorStatusHighLimit(&asynParams, motorStatusHighLimit_)
-, paramMotorStatusLowLimit(&asynParams, motorStatusLowLimit_)
-, paramMotorStatusHasEncoder(&asynParams, motorStatusHasEncoder_)
-, paramMotorStatusSlip(&asynParams, motorStatusSlip_)
-, paramMotorStatusCommsError(&asynParams, motorStatusCommsError_)
-, paramMotorStatusFollowingError(&asynParams, motorStatusFollowingError_)
-, paramMotorStatusProblem(&asynParams, motorStatusProblem_)
-, paramMotorStatusHomed(&asynParams, motorStatusHomed_)
-, paramMotorVelocity(&asynParams, motorVelocity_)
-, paramMotorEncoderPosition(&asynParams, motorEncoderPosition_)
-, paramMotorMotorPosition(&asynParams, motorPosition_)
-, controllerNum(controllerNum)
-, connectionPollRequired(0)
+                , paramMotorStatusDone(&asynParams, motorStatusDone_), paramMotorStatusMoving(
+                &asynParams, motorStatusMoving_), paramMotorStatusDirection(
+                &asynParams, motorStatusDirection_), paramMotorStatusHighLimit(
+                &asynParams, motorStatusHighLimit_), paramMotorStatusLowLimit(
+                &asynParams, motorStatusLowLimit_), paramMotorStatusHasEncoder(
+                &asynParams, motorStatusHasEncoder_), paramMotorStatusSlip(
+                &asynParams, motorStatusSlip_), paramMotorStatusCommsError(
+                &asynParams, motorStatusCommsError_), paramMotorStatusFollowingError(
+                &asynParams, motorStatusFollowingError_), paramMotorStatusProblem(
+                &asynParams, motorStatusProblem_), paramMotorStatusHomed(
+                &asynParams, motorStatusHomed_), paramMotorVelocity(&asynParams,
+                motorVelocity_), paramMotorEncoderPosition(&asynParams,
+                motorEncoderPosition_), paramMotorMotorPosition(&asynParams,
+                motorPosition_), controllerNum(controllerNum), connectionPollRequired(
+                0)
 {
     // Connect to the comm port
-    if(pasynOctetSyncIO->connect(commPortName, commPortAddress,
-            &commPortUser, NULL) != asynSuccess)
+    if (pasynOctetSyncIO->connect(commPortName, commPortAddress, &commPortUser,
+    NULL) != asynSuccess)
     {
         printf("ecmController: Failed to connect to comm port %s\n",
                 commPortName);
@@ -96,77 +95,71 @@ EcmController::~EcmController()
  */
 asynStatus EcmController::poll()
 {
-	TakeLock takeLock(this, /*alreadyTaken=*/true);
-	FreeLock freeLock(takeLock);
+    TakeLock takeLock(this, /*alreadyTaken=*/true);
+    FreeLock freeLock(takeLock);
     // Get current connection state
-    if(paramConnected)
+    if (paramConnected)
     {
         // Poll the axes
-		bool anyOk = false;
-		for(int i=0; i<numAxes_; i++)
-		{
-			// Skip explicitly disabled axes
-			if(this->paramPhysAxis[i] == NOAXIS)
-			{
-				this->paramAxisConnected[i] = false;
-				continue;
-			}
-
-			SmaractAxis* pAxis = dynamic_cast<SmaractAxis*>(getAxis(i));
-			if(pAxis != NULL)
-			{
-				// Try to poll twice if the first one fails
-				bool thisOneOk = (pAxis->pollStatus(freeLock) || pAxis->pollStatus(freeLock));
-				this->paramAxisConnected[i] = thisOneOk;
-				if(!thisOneOk)
-				{
-					printf("Poll failed for axis %d\n", i);
-				}
-				anyOk = anyOk || thisOneOk;
-			}
-		}
-        // Have we lost connection?
-        if(!anyOk)
+        bool anyOk = false;
+        for (int i = 0; i < numAxes_; i++)
         {
-        	TakeLock again(freeLock);
-        	paramConnected = false;
+            // Skip explicitly disabled axes
+            if (this->paramPhysAxis[i] == NOAXIS)
+            {
+                this->paramAxisConnected[i] = false;
+                continue;
+            }
+
+            SmaractAxis* pAxis = dynamic_cast<SmaractAxis*>(getAxis(i));
+            if (pAxis != NULL)
+            {
+                // Try to poll twice if the first one fails
+                bool thisOneOk = (pAxis->pollStatus(freeLock)
+                        || pAxis->pollStatus(freeLock));
+                this->paramAxisConnected[i] = thisOneOk;
+                if (!thisOneOk)
+                {
+                    printf("Poll failed for axis %d\n", i);
+                }
+                anyOk = anyOk || thisOneOk;
+            }
+        }
+        // Have we lost connection?
+        if (!anyOk)
+        {
+            TakeLock again(freeLock);
+            paramConnected = false;
         }
     }
     else
     {
- /*
-         // Are we connected yet?
+        // Are we connected yet?
         bool ok = true;
-        int verHigh;
-        int verLow;
-        int verBuild;
-        int sysId;
+        char version[RXBUFFERSIZE];
 
-        // ok = ok && command("GIV", "IV", &verHigh, &verLow, &verBuild);
-        if(ok)
+        ok = ok && command("%info version", version, RXBUFFERSIZE, true);
+        printf("### INFO RESULT = %s\n", version);
+        if (ok)
         {
-            // ok = ok && command("GSI", "ID", &sysId);
             // Perform once only poll on the axes
-            for(int i=0; i<numAxes_; i++)
+            for (int i = 0; i < numAxes_; i++)
             {
                 SmaractAxis* pAxis = dynamic_cast<SmaractAxis*>(getAxis(i));
-                if(pAxis != NULL)
+                if (pAxis != NULL)
                 {
                     pAxis->onceOnlyStatus(freeLock);
                 }
             }
-            if(ok)
+            if (ok)
             {
                 // Everything ok, update parameters
                 TakeLock again(freeLock);
-                paramVersionHigh = verHigh;
-                paramVersionLow = verLow;
-                paramVersionBuild = verBuild;
-                paramSystemId = sysId;
+                printf("### VERSION = %s\n", version + info_header_len);
+                paramVersion = version + info_header_len;
                 paramConnected = true;
             }
         }
-*/
     }
     return asynSuccess;
 }
@@ -175,32 +168,39 @@ asynStatus EcmController::poll()
  *
  */
 bool EcmController::sendReceive(const char* tx, const char* txTerminator,
-        char* rx, size_t rxSize, const char* rxTerminator)
+        char* rx, size_t rxSize, const char* rxTerminator, bool multi_line)
 {
     int eomReason;
+    bool retVal = false;
     size_t bytesOut;
     size_t bytesIn;
+    size_t bytesAll = 0;
 #if DEBUG
     printf("Tx> %s\n", tx);
 #endif
     pasynOctetSyncIO->flush(commPortUser);
-    pasynOctetSyncIO->setInputEos(commPortUser, rxTerminator, strlen(rxTerminator));
-    pasynOctetSyncIO->setOutputEos(commPortUser, txTerminator, strlen(txTerminator));
-    asynStatus result = pasynOctetSyncIO->writeRead(commPortUser, tx, strlen(tx),
-            rx, rxSize, /*timeout=*/1.0, &bytesOut, &bytesIn, &eomReason);
-    // JAT: I obviously had some trouble with the reliability of the comms but this
-    //      retry solution is now causing problems.  So I've removed the retry and
-    //      extended the timeout of the first writeRead from 0.1 seconds.
-    //if(result != asynSuccess)
-    //{
-    //    pasynOctetSyncIO->flush(commPortUser);
-    //    result = pasynOctetSyncIO->writeRead(commPortUser, tx, strlen(tx),
-    //            rx, rxSize, /*timeout=*/0.1, &bytesOut, &bytesIn, &eomReason);
-    //}
+    pasynOctetSyncIO->setInputEos(commPortUser, rxTerminator,
+            strlen(rxTerminator));
+    pasynOctetSyncIO->setOutputEos(commPortUser, txTerminator,
+            strlen(txTerminator));
+    asynStatus result = pasynOctetSyncIO->writeRead(commPortUser, tx,
+            strlen(tx), rx, rxSize, /*timeout=*/1.0, &bytesOut, &bytesIn,
+            &eomReason);
+    if (multi_line)
+    {
+        bytesAll = bytesIn;
+        while (bytesIn > 0)
+        {
+            pasynOctetSyncIO->read(commPortUser, rx + bytesAll,
+                    rxSize - bytesAll, 0.1, &bytesIn, &eomReason);
+            bytesAll += bytesIn;
+        }
+    }
 #if DEBUG
     printf("Rx[%d]< %s\n", result, rx);
 #endif
-    return result == asynSuccess;
+    retVal = (result == asynSuccess);
+    return retVal;
 }
 
 /** parses the return from a command to determine if it contains a
@@ -212,9 +212,9 @@ int EcmController::parseReturnCode(const char* rxbuffer)
 {
     int result = 0;
 
-    if(rxbuffer[0] == '!')
+    if (rxbuffer[0] == '!')
     {
-        result=atoi(rxbuffer+1);
+        result = atoi(rxbuffer + 1);
     }
 
     return result;
@@ -229,47 +229,80 @@ int EcmController::parseReturnCode(const char* rxbuffer)
  * \param[out] outputCount size of above and expected no. of outputs
  * \return Returns true for success
  */
-bool EcmController::command(const char* cmd, double inputs[], int inputCount, double outputs[], int outputCount)
+bool EcmController::command(const char* cmd, double inputs[], int inputCount,
+        double outputs[], int outputCount)
 {
     char txBuffer[TXBUFFERSIZE];
     char rxBuffer[RXBUFFERSIZE];
     bool result = false;
+    size_t txlen = 0;
 
-    snprintf(txBuffer, TXBUFFERSIZE, "%s ", cmd);
-    for(int i = 0; i<inputCount; i++)
+    snprintf(txBuffer, TXBUFFERSIZE, "%s", cmd);
+    for (int i = 0; i < inputCount; i++ && txlen < TXBUFFERSIZE)
     {
-        snprintf(txBuffer, TXBUFFERSIZE, "%s %f", txBuffer, inputs[i]);
+        txlen = strlen(txBuffer);
+        snprintf(txBuffer+txlen, TXBUFFERSIZE-txlen, " %f", inputs[i]);
     }
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE-1, "\n");
-    rxBuffer[RXBUFFERSIZE-1] = '\0';
+    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE - 1, "\n");
+    rxBuffer[RXBUFFERSIZE - 1] = '\0';
 
-    if(result)
+    if (result)
     {
         int returnCode = parseReturnCode(rxBuffer);
-        if(returnCode != 0)
+        if (returnCode != 0)
         {
             asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                  "EcmController::command Error %d returned from command: %s\n",
-                  returnCode, txBuffer);
+                    "EcmController::command Error %d returned from command: %s\n",
+                    returnCode, txBuffer);
             result = false;
         }
     }
 
-    if(result)
+    if (result)
     {
         int count = 0;
         char* p = rxBuffer;
-        while(p < rxBuffer+RXBUFFERSIZE && count < outputCount)
+        while (p < rxBuffer + RXBUFFERSIZE && count < outputCount)
         {
             char* end;
             outputs[count] = strtof(p, &end);
-            if(end == p)
+            if (end == p)
                 break;
-
+            count++;
             p = end;
         }
         result = (count == outputCount);
     }
+    return result;
+}
+
+/** Transmits a command to the controller
+ *   This function handles commands with floating point inputs and outputs
+ * \param[in] cmd The command code to send
+ * \param[out] output string results buffer
+ * \param[in] output max size of above
+ * \return Returns true for success
+ */
+bool EcmController::command(const char* cmd, char* output, int outsize,
+        bool multi_line)
+{
+    bool result = false;
+
+    result = sendReceive(cmd, "\n", output, outsize - 1, "\n", multi_line);
+    output[outsize - 1] = '\0';
+
+    if (result)
+    {
+        int returnCode = parseReturnCode(output);
+        if (returnCode != 0)
+        {
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                    "EcmController::command Error %d returned from command: %s\n",
+                    returnCode, cmd);
+            result = false;
+        }
+    }
+
     return result;
 }
 
@@ -303,36 +336,37 @@ asynStatus EcmController::writeInt32(asynUser *pasynUser, epicsInt32 value)
  */
 void EcmController::onPhysAxisChange(TakeLock& takeLock, int list, int value)
 {
-	int logicalAxis = list;
-	int physicalAxis = value;
+    int logicalAxis = list;
+    int physicalAxis = value;
 
-	// If the requested physical axis number is out of range, set
-	//	the value to -1 (which = no axis).
-	if(physicalAxis<0)
-	{
-		this->paramPhysAxis[logicalAxis] = NOAXIS;
-		std::cout << "Logical axis " << logicalAxis << " disabled\n";
-	}
-	else
-	{
-		// If any other axes currently point to the requested physical
-		//	axis, disable them (by setting to axis -1)
-		int numLogicalAxes = this->numAxes_;
-		for(int a=0; a<numLogicalAxes; ++a)
-		{
-			if(a == logicalAxis) continue;
+    // If the requested physical axis number is out of range, set
+    //	the value to -1 (which = no axis).
+    if (physicalAxis < 0)
+    {
+        this->paramPhysAxis[logicalAxis] = NOAXIS;
+        std::cout << "Logical axis " << logicalAxis << " disabled\n";
+    }
+    else
+    {
+        // If any other axes currently point to the requested physical
+        //	axis, disable them (by setting to axis -1)
+        int numLogicalAxes = this->numAxes_;
+        for (int a = 0; a < numLogicalAxes; ++a)
+        {
+            if (a == logicalAxis)
+                continue;
 
-			if(this->paramPhysAxis[a] == physicalAxis)
-			{
-				this->paramPhysAxis[a] = NOAXIS;
-				std::cout << "Logical axis " << a << " disabled\n";
-			}
-		}
-		this->paramPhysAxis[logicalAxis] = physicalAxis;
-		std::cout << "Logical axis " << logicalAxis << " set to physical axis " << physicalAxis << "\n";
-	}
+            if (this->paramPhysAxis[a] == physicalAxis)
+            {
+                this->paramPhysAxis[a] = NOAXIS;
+                std::cout << "Logical axis " << a << " disabled\n";
+            }
+        }
+        this->paramPhysAxis[logicalAxis] = physicalAxis;
+        std::cout << "Logical axis " << logicalAxis << " set to physical axis "
+                << physicalAxis << "\n";
+    }
 }
-
 
 /** Parameter change handler
  */

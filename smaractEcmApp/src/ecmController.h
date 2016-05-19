@@ -12,6 +12,7 @@
 #include "asynMotorAxis.h"
 #include "smaractAxis.h"
 #include "AsynParams.h"
+#include "StringParam.h"
 #include "IntegerParam.h"
 #include "DoubleParam.h"
 #include "EnumParam.h"
@@ -39,9 +40,9 @@ public:
         NOAXIS = -1
     };
 public:
-    EcmController(const char *portName,
-            const char* commPortName, int commPortAddress, int numAxes,
-            double movingPollPeriod, double idlePollPeriod);
+    EcmController(const char *portName, const char* commPortName,
+            int commPortAddress, int numAxes, double movingPollPeriod,
+            double idlePollPeriod);
     virtual ~EcmController();
 
     // Overridden from asynMotorController
@@ -52,9 +53,7 @@ public:
 public:
     AsynParams asynParams;
     // New parameters
-    IntegerParam paramVersionHigh;
-    IntegerParam paramVersionLow;
-    IntegerParam paramVersionBuild;
+    StringParam paramVersion;
     EnumParam<bool> paramConnected;
     IntegerParam paramSystemId;
     IntegerParam paramActiveHold;
@@ -90,9 +89,11 @@ private:
 private:
     /* Methods for use by the axes */
     bool sendReceive(const char* tx, const char* txTerminator, char* rx,
-            size_t rxSize, const char* rxTerminator);
+    size_t rxSize, const char* rxTerminator, bool multi_line = false);
     bool command(const char* cmd, double inputs[], int inputCount,
             double outputs[], int outputCount);
+    bool command(const char* cmd, char* output, int outsize, bool multi_line =
+            false);
     /* Parameter notification methods */
     void onCalibrateSensor(TakeLock& takeLock, int list, int value);
     void onPowerSave(TakeLock& takeLock, int list, int value);

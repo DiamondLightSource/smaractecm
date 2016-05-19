@@ -7,28 +7,13 @@
 # % macro,  PORT,    Asyn port
 # % macro,  TIMEOUT, Timeout
 # % gui,    $(PORT),  edmembed, smaractcontroller_embed.edl, P=$(P),R=$(R)
-record(longin, "$(P)$(R):VERSIONHI")
+record(stringin, "$(P)$(R):VERSION")
 {
     field(SCAN, "I/O Intr")
-    field(DTYP, "asynInt32")
-    field(VAL,  "0")
-    field(INP,  "@asyn($(PORT),0,$(TIMEOUT))VERSION_HIGH")
-}
-
-record(longin, "$(P)$(R):VERSIONLO")
-{
-    field(SCAN, "I/O Intr")
-    field(DTYP, "asynInt32")
-    field(VAL,  "0")
-    field(INP,  "@asyn($(PORT),0,$(TIMEOUT))VERSION_LOW")
-}
-
-record(longin, "$(P)$(R):VERSIONBUILD")
-{
-    field(SCAN, "I/O Intr")
-    field(DTYP, "asynInt32")
-    field(VAL,  "0")
-    field(INP,  "@asyn($(PORT),0,$(TIMEOUT))VERSION_BUILD")
+    field(DTYP, "asynOctetRead")
+    field(VAL,  "")
+    field(INP,  "@asyn($(PORT),0,$(TIMEOUT))VERSION")
+    field(PINI, "1")
 }
 
 record(longin, "$(P)$(R):SYSTEMID")

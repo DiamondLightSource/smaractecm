@@ -41,28 +41,22 @@ asynStatus SmarpodAxis::move(double position, int relative, double minVelocity,
  */
 bool SmarpodAxis::onceOnlyStatus(FreeLock& freeLock)
 {
-//    // If axis not connected to a physical address, do nothing
-//    if (!isConnected())
-//        return asynSuccess;
-//
-//    bool result = true;
-//    int a;
-//
-//    // Put the axis in debug mode so we can see the sine and cosine parameters
-//    result = result && controller->command("ED", physicalAxis(), 1, "E", &a);
-//    if (result)
-//    {
-//        TakeLock takeLock(freeLock);
-//        setIntegerParam(controller->motorStatusHighLimit_, 0);
-//        setIntegerParam(controller->motorStatusLowLimit_, 0);
-//        setIntegerParam(controller->motorStatusHasEncoder_, 0);
-//        setDoubleParam(controller->motorVelocity_, 0.0);
-//        setIntegerParam(controller->motorStatusSlip_, 0);
-//        setIntegerParam(controller->motorStatusCommsError_, 0);
-//        setIntegerParam(controller->motorStatusFollowingError_, 0);
-//        setIntegerParam(controller->motorStatusProblem_, 0);
-//    }
-//    return result;
+    // If axis not connected to a physical address, do nothing
+    if (!isConnected())
+        return asynSuccess;
+
+    smarpod->connected(axisNum);
+
+    TakeLock takeLock(freeLock);
+    setIntegerParam(controller->motorStatusHighLimit_, 0);
+    setIntegerParam(controller->motorStatusLowLimit_, 0);
+    setIntegerParam(controller->motorStatusHasEncoder_, 0);
+    setDoubleParam(controller->motorVelocity_, 0.0);
+    setIntegerParam(controller->motorStatusSlip_, 0);
+    setIntegerParam(controller->motorStatusCommsError_, 0);
+    setIntegerParam(controller->motorStatusFollowingError_, 0);
+    setIntegerParam(controller->motorStatusProblem_, 0);
+
     return true;
 }
 
@@ -77,13 +71,11 @@ bool SmarpodAxis::pollStatus(FreeLock& freeLock)
         return false;
 
     bool result = true;
-    int curPosition;
-    int homeStatus;
+    double curPosition;
+    bool homeStatus;
     int status;
 
-    result = smarpod->getPosition(axisNum, &curPosition);
-    result &= smarpod->getStatus(axisNum, &status);
-    result &= smarpod->getHomeStatus(axisNum, &homeStatus);
+    result = smarpod->getAxis(axisNum, &curPosition, &status, &homeStatus);
 
     if (result)
     {

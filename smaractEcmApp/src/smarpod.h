@@ -26,11 +26,11 @@ public:
             double maxVelocity, double acceleration);
 
 public:
-    bool pollStatus(FreeLock& freeLock);
+    bool connected(int axisNum);
+    bool getAxis(int axisNum, double* curPosition, int* status,
+            bool* homeStatus);
+private:
     bool getCurrentPositions(bool setDemands=false);
-    bool getPosition(int axisNum, int* curPosition);
-    bool getStatus(int axisNum, int* status);
-    bool getHomeStatus(int axisNum, int* homeStatus);
 
 private:
     EcmController* ctlr;

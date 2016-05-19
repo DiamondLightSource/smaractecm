@@ -7,8 +7,6 @@
 # % macro,  PORT,    Asyn port
 # % macro,  AXIS,    Axis number
 # % macro,  TIMEOUT, Timeout
-# % macro,  name,    gui entry
-# % gui,    $(name=), edmembed, smaractaxis_embed.edl, P=$(P),M=$(R)
 record(bo, "$(P)$(R):CALIBRATE")
 {
     field(SCAN, "Passive")

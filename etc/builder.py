@@ -77,7 +77,7 @@ class SmaractSmarpodAxis(_smaractSmarpodAxisTemplate, Device):
     TemplateFile = 'smarpodAxis.template'
     def __init__(self, name, controller, axis_number, smarpod, p, r, timeout):
         self.__super.__init__(P=p, R=r, PORT=controller, 
-                              AXIS=axis_number, TIMEOUT=timeout, name=name)
+                              AXIS=axis_number, TIMEOUT=timeout)
         self.__dict__.update(locals())
 
     ArgInfo = makeArgInfo(
