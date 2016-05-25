@@ -17,6 +17,9 @@
 #include "DoubleParam.h"
 #include "EnumParam.h"
 
+#define TERMINATOR "\r\n"
+#define TIMEOUT 20
+
 class EcmController: public asynMotorController
 {
     // need to be friends with the derived classes of base smaractAxis
@@ -88,12 +91,14 @@ private:
 
 private:
     /* Methods for use by the axes */
-    bool sendReceive(const char* tx, const char* txTerminator, char* rx,
-    size_t rxSize, const char* rxTerminator, bool multi_line = false);
+    bool sendReceive(const char* tx, char* rx, size_t rxSize,
+            double timeout, bool multi_line=false);
+    bool command(const char* rx, char* tx, int txSize,
+            double timeout, bool multi_line=false);
     bool command(const char* cmd, double inputs[], int inputCount,
-            double outputs[], int outputCount);
-    bool command(const char* cmd, char* output, int outsize, bool multi_line =
-            false);
+            double outputs[], int outputCount, double timeout );
+    bool command(const char* cmd, int inputs[], int inputCount,
+            int outputs[], int outputCount, double timeout);
     /* Parameter notification methods */
     void onCalibrateSensor(TakeLock& takeLock, int list, int value);
     void onPowerSave(TakeLock& takeLock, int list, int value);

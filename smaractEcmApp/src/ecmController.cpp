@@ -138,7 +138,8 @@ asynStatus EcmController::poll()
         bool ok = true;
         char version[RXBUFFERSIZE];
 
-        ok = ok && command("%info version", version, RXBUFFERSIZE, true);
+        ok = ok && command("%info version", version, RXBUFFERSIZE, TIMEOUT,
+                        true);
         printf("### INFO RESULT = %s\n", version);
         if (ok)
         {
@@ -167,11 +168,11 @@ asynStatus EcmController::poll()
 /** Transmits a string to the controller and waits for a return result.
  *
  */
-bool EcmController::sendReceive(const char* tx, const char* txTerminator,
-        char* rx, size_t rxSize, const char* rxTerminator, bool multi_line)
+bool EcmController::sendReceive(const char* tx, char* rx, size_t rxSize,
+        double timeout, bool multi_line)
 {
     int eomReason;
-    bool retVal = false;
+    bool result = false;
     size_t bytesOut;
     size_t bytesIn;
     size_t bytesAll = 0;
@@ -179,14 +180,14 @@ bool EcmController::sendReceive(const char* tx, const char* txTerminator,
     printf("Tx> %s\n", tx);
 #endif
     pasynOctetSyncIO->flush(commPortUser);
-    pasynOctetSyncIO->setInputEos(commPortUser, rxTerminator,
-            strlen(rxTerminator));
-    pasynOctetSyncIO->setOutputEos(commPortUser, txTerminator,
-            strlen(txTerminator));
-    asynStatus result = pasynOctetSyncIO->writeRead(commPortUser, tx,
-            strlen(tx), rx, rxSize, /*timeout=*/1.0, &bytesOut, &bytesIn,
-            &eomReason);
-    if (multi_line)
+    pasynOctetSyncIO->setInputEos(commPortUser, TERMINATOR, strlen(TERMINATOR));
+    pasynOctetSyncIO->setOutputEos(commPortUser, TERMINATOR,
+            strlen(TERMINATOR));
+    asynStatus asynRes = pasynOctetSyncIO->writeRead(commPortUser, tx,
+            strlen(tx), rx, rxSize, timeout, &bytesOut, &bytesIn, &eomReason);
+    result = (asynRes == asynSuccess);
+
+    if (result && multi_line)
     {
         bytesAll = bytesIn;
         while (bytesIn > 0)
@@ -196,11 +197,12 @@ bool EcmController::sendReceive(const char* tx, const char* txTerminator,
             bytesAll += bytesIn;
         }
     }
+
 #if DEBUG
     printf("Rx[%d]< %s\n", result, rx);
 #endif
-    retVal = (result == asynSuccess);
-    return retVal;
+
+    return result;
 }
 
 /** parses the return from a command to determine if it contains a
@@ -225,12 +227,12 @@ int EcmController::parseReturnCode(const char* rxbuffer)
  * \param[in] cmd The command code to send
  * \param[in] inputs The parameters to the command
  * \param[in] inputCount number of command parameters
- * \param[out] outputs floating point results buffer
+ * \param[out] outputs results buffer
  * \param[out] outputCount size of above and expected no. of outputs
  * \return Returns true for success
  */
 bool EcmController::command(const char* cmd, double inputs[], int inputCount,
-        double outputs[], int outputCount)
+        double outputs[], int outputCount, double timeout)
 {
     char txBuffer[TXBUFFERSIZE];
     char rxBuffer[RXBUFFERSIZE];
@@ -241,22 +243,9 @@ bool EcmController::command(const char* cmd, double inputs[], int inputCount,
     for (int i = 0; i < inputCount; i++ && txlen < TXBUFFERSIZE)
     {
         txlen = strlen(txBuffer);
-        snprintf(txBuffer+txlen, TXBUFFERSIZE-txlen, " %f", inputs[i]);
+        snprintf(txBuffer + txlen, TXBUFFERSIZE - txlen, " %e", inputs[i]);
     }
-    result = sendReceive(txBuffer, "\n", rxBuffer, RXBUFFERSIZE - 1, "\n");
-    rxBuffer[RXBUFFERSIZE - 1] = '\0';
-
-    if (result)
-    {
-        int returnCode = parseReturnCode(rxBuffer);
-        if (returnCode != 0)
-        {
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                    "EcmController::command Error %d returned from command: %s\n",
-                    returnCode, txBuffer);
-            result = false;
-        }
-    }
+    result = command(txBuffer, rxBuffer, RXBUFFERSIZE - 1, timeout);
 
     if (result)
     {
@@ -266,6 +255,50 @@ bool EcmController::command(const char* cmd, double inputs[], int inputCount,
         {
             char* end;
             outputs[count] = strtof(p, &end);
+            if (end == p)
+                break;
+            count++;
+            p = end;
+        }
+        result = (count == outputCount);
+    }
+    return result;
+
+}
+
+/** Transmits a command to the controller
+ *   This function handles commands with integer inputs and outputs
+ * \param[in] cmd The command code to send
+ * \param[in] inputs The parameters to the command
+ * \param[in] inputCount number of command parameters
+ * \param[out] outputs results buffer
+ * \param[out] outputCount size of above and expected no. of outputs
+ * \return Returns true for success
+ */
+bool EcmController::command(const char* cmd, int inputs[], int inputCount,
+        int outputs[], int outputCount, double timeout)
+{
+    char txBuffer[TXBUFFERSIZE];
+    char rxBuffer[RXBUFFERSIZE];
+    bool result = false;
+    size_t txlen = 0;
+    int count = 0;
+
+    snprintf(txBuffer, TXBUFFERSIZE, "%s", cmd);
+    for (int i = 0; i < inputCount; i++ && txlen < TXBUFFERSIZE)
+    {
+        txlen = strlen(txBuffer);
+        snprintf(txBuffer + txlen, TXBUFFERSIZE - txlen, " %d", inputs[i]);
+    }
+    result = command(txBuffer, rxBuffer, RXBUFFERSIZE - 1, timeout);
+
+    if (result)
+    {
+        char* p = rxBuffer;
+        while (p < rxBuffer + RXBUFFERSIZE && count < outputCount)
+        {
+            char* end;
+            outputs[count] = strtod(p, &end);
             if (end == p)
                 break;
             count++;
@@ -284,11 +317,11 @@ bool EcmController::command(const char* cmd, double inputs[], int inputCount,
  * \return Returns true for success
  */
 bool EcmController::command(const char* cmd, char* output, int outsize,
-        bool multi_line)
+        double timeout, bool multi_line)
 {
     bool result = false;
 
-    result = sendReceive(cmd, "\n", output, outsize - 1, "\n", multi_line);
+    result = sendReceive(cmd, output, outsize - 1, timeout, multi_line);
     output[outsize - 1] = '\0';
 
     if (result)

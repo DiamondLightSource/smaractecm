@@ -3,6 +3,7 @@ from iocbuilder.modules.motor import MotorLib
 from iocbuilder.modules.asynaid import Asynaid
 from iocbuilder.modules.asyn import Asyn, AsynIP, AsynPort
 from iocbuilder.arginfo import makeArgInfo, Simple, Ident
+from _hotshot import resolution
 
 __all__ = ['SmaractEcmController', 'SmaractSmarpodAxis', 'Smarpod']
 
@@ -15,7 +16,7 @@ class _smaractEcmControllerTemplate(AutoSubstitution):
 # class SmaractEcmController(_smaractEcmControllerTemplate, AsynPort):
 class SmaractEcmController(_smaractEcmControllerTemplate, Device):
     '''Smaract ECM controller'''
-    Dependencies = (Asyn, MotorLib, Asynaid )
+    Dependencies = (Asyn, MotorLib, Asynaid)
     LibFileList = ['smaractEcm']
     DbdFileList = ['smaractEcm']
     UniqueName = 'PORT'
@@ -53,20 +54,23 @@ class SmaractEcmController(_smaractEcmControllerTemplate, Device):
 
 class Smarpod(Device):
     '''Smarpod in smaract Ecm controller'''
-    def __init__(self, name, controller):
+    def __init__(self, name, controller, resolution):
         self.__super.__init__()
-        self.name = name
-        self.controller = controller
-        print "creating smarpod %s with controller %s" % (name, controller)
+        self.__dict__.update(locals())
+        print "creating smarpod %s with controller %s, res %s" % \
+            (name, controller, self.resolution)
 
     ArgInfo = makeArgInfo(
         __init__,
         name=Simple("Smarpod name", str),
-        controller=Ident("Ecm controller port name", SmaractEcmController)
+        controller=Ident("Ecm controller port name", SmaractEcmController),
+        resolution=Simple("Smarpod axes resolution in m" \
+                          " (defines smallest possible step)", float)
     )
     def Initialise(self):
         print 'smarpodConfig("%(name)s",' \
-            ' "%(controller)s")' % self.__dict__
+            ' "%(controller)s", ' \
+            '"%(resolution)s")' % self.__dict__
 
 class _smaractSmarpodAxisTemplate(AutoSubstitution):
     TemplateFile = 'smarpodAxis.template'
@@ -76,7 +80,7 @@ class SmaractSmarpodAxis(_smaractSmarpodAxisTemplate, Device):
     '''Smarpod axis in smaract controller'''
     TemplateFile = 'smarpodAxis.template'
     def __init__(self, name, controller, axis_number, smarpod, p, r, timeout):
-        self.__super.__init__(P=p, R=r, PORT=controller, 
+        self.__super.__init__(P=p, R=r, PORT=controller,
                               AXIS=axis_number, TIMEOUT=timeout)
         self.__dict__.update(locals())
 

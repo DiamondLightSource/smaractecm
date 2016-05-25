@@ -16,6 +16,8 @@ SmaractAxis::SmaractAxis(EcmController* ctlr, int axisNum)
 , controller(ctlr)
 , axisNum(axisNum)
 , curPosition(0)
+, previousPosition(0)
+, previousDirection(0)
 {
 }
 

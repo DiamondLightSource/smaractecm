@@ -9,9 +9,24 @@
 #include "ecmController.h"
 #include <epicsThread.h>
 
+/************
+ * TODO
+ * DONE use cr/lf
+ * DONE homing / homed
+ * DONE moving status
+ * DONE stop
+ * DONE get resolution correct
+ * velocity control
+ * acceleration control??
+ * sensor mode control (should be left default?)
+ * Switching Unit number
+ * pivot point setting (and mode)
+ * show error state on disconnect
+ *
+ *************/
+
 SmarpodAxis::SmarpodAxis(EcmController* ctlr, int axisNum, Smarpod* smarpod) :
-        SmaractAxis(ctlr, axisNum),
-        smarpod(smarpod)
+        SmaractAxis(ctlr, axisNum), smarpod(smarpod)
 {
 }
 
@@ -31,6 +46,7 @@ asynStatus SmarpodAxis::move(double position, int relative, double minVelocity,
 {
     bool result;
 
+    printf("### move pos %e, vel %e\n", position, maxVelocity);
     result = smarpod->move(axisNum, position, relative, minVelocity,
             maxVelocity, acceleration);
 
@@ -73,19 +89,39 @@ bool SmarpodAxis::pollStatus(FreeLock& freeLock)
     bool result = true;
     double curPosition;
     bool homeStatus;
-    int status;
+    int moving;
+    int direction = 0;
 
-    result = smarpod->getAxis(axisNum, &curPosition, &status, &homeStatus);
+    result = smarpod->getAxis(axisNum, &curPosition, &moving, &homeStatus);
 
     if (result)
     {
         TakeLock takeLock(freeLock);
         setDoubleParam(controller->motorEncoderPosition_, (double) curPosition);
         setDoubleParam(controller->motorPosition_, (double) curPosition);
-        setIntegerParam(controller->motorStatusDone_,
-                status == 3 || status == 0);
-        setIntegerParam(controller->motorStatusMoving_,
-                !(status == 3 || status == 0));
+        setIntegerParam(controller->motorStatusDone_, (int) (moving == 0));
+        setIntegerParam(controller->motorStatusMoving_, (int) (moving != 0));
+        setIntegerParam(controller->motorStatusHomed_, (int) homeStatus);
+        setDoubleParam(controller->motorVelocity_,
+                (double) smarpod->getVelocity());
+
+        /* Use previous position and current position to calculate direction.*/
+        if ((curPosition - previousPosition) > 0)
+        {
+            direction = 1;
+        }
+        else if (curPosition - previousPosition == 0.0)
+        {
+            direction = previousDirection;
+        }
+        else
+        {
+            direction = 0;
+        }
+        setIntegerParam(controller->motorStatusDirection_, direction);
+        /*Store position to calculate direction for next poll.*/
+        previousPosition = curPosition;
+        previousDirection = direction;
 
         controller->paramMotorStatusHomed[axisNum] = homeStatus != 0;
 
@@ -116,38 +152,25 @@ asynStatus SmarpodAxis::moveVelocity(double minVelocity, double maxVelocity,
 asynStatus SmarpodAxis::home(double minVelocity, double maxVelocity,
         double acceleration, int forwards)
 {
-//    // If axis not connected to a physical address, do nothing
-//    if (!isConnected())
-//        return asynSuccess;
-//
-//    TakeLock takeLock(controller, /*alreadyTake=*/true);
-//    int a;
-//    int b;
-//
-//    // Get information
-//    int activeHold = controller->paramActiveHold[axisNum];
-//
-//    setIntegerParam(controller->motorStatusDone_, 0);
-//    setIntegerParam(controller->motorStatusMoving_, 1);
-//    setIntegerParam(controller->motorStatusDirection_, forwards);
-//
-//    // Perform the move
-//    FreeLock freeLock(takeLock);
-//    controller->command("SCLS", physicalAxis(), (int) maxVelocity, "E", &a, &b);
-//    controller->command("FRM", physicalAxis(), forwards ? 0 : 1,
-//            60000 * activeHold, 1, "E", &a, &b);
-//
-//    // Wait for move to complete.
-//    int status;
-//    bool moving = true;
-//    while (moving && controller->command("GS", physicalAxis(), "S", &a, &status))
-//    {
-//        moving = !(status == 3 || status == 0);
-//    }
-//
-//    // Do a poll now
-//    pollStatus(freeLock);
-      return asynSuccess;
+    // If axis not connected to a physical address, do nothing
+    if (!isConnected())
+        return asynSuccess;
+
+    TakeLock takeLock(controller, /*alreadyTake=*/true);
+
+    // Get information
+    setIntegerParam(controller->motorStatusDone_, 0);
+    setIntegerParam(controller->motorStatusMoving_, 1);
+    setIntegerParam(controller->motorStatusDirection_, forwards);
+
+    // Perform the move with the lock on since the protocol does
+    // not return until the home complete or fails
+    smarpod->home();
+
+    // Do a poll now
+    FreeLock freeLock(takeLock);
+    pollStatus(freeLock);
+    return asynSuccess;
 }
 
 /** Stop axis command.  Entered with the lock taken.
@@ -155,17 +178,16 @@ asynStatus SmarpodAxis::home(double minVelocity, double maxVelocity,
  */
 asynStatus SmarpodAxis::stop(double acceleration)
 {
-//    // If axis not connected to a physical address, do nothing
-//    if (!isConnected())
-//        return asynSuccess;
-//
-//    TakeLock takeLock(controller, /*alreadyTake=*/true);
-//
-//    int a;
-//    controller->command("S", physicalAxis(), "E", &a);
-//
-//    setIntegerParam(controller->motorStatusDone_, 1);
-//    setIntegerParam(controller->motorStatusMoving_, 0);
+    // If axis not connected to a physical address, do nothing
+    if (!isConnected())
+        return asynSuccess;
+
+    TakeLock takeLock(controller, /*alreadyTake=*/true);
+
+    smarpod->stop();
+
+    setIntegerParam(controller->motorStatusDone_, 1);
+    setIntegerParam(controller->motorStatusMoving_, 0);
 
     return asynSuccess;
 }

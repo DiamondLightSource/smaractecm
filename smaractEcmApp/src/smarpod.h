@@ -19,7 +19,7 @@
 class Smarpod
 {
 public:
-    Smarpod(EcmController* ctlr);
+    Smarpod(EcmController* ctlr, double resolution);
     virtual ~Smarpod();
 
     bool move(int axisNum, double position, int relative, double minVelocity,
@@ -27,16 +27,22 @@ public:
 
 public:
     bool connected(int axisNum);
-    bool getAxis(int axisNum, double* curPosition, int* status,
+    bool home();
+    bool stop();
+    bool getAxis(int axisNum, double* curPosition, int* movingStatus,
             bool* homeStatus);
+    double getVelocity();
 private:
     bool getCurrentPositions(bool setDemands=false);
 
 private:
     EcmController* ctlr;
-    bool firstMove;
     double positions[AXIS_COUNT];
     double demandPositions[AXIS_COUNT];
+    int referenced;
+    int moveStatus;
+    double resolution;
+    double velocity;
 };
 
 #endif /* SMARACTAPP_SRC_SMARPOD_H_ */

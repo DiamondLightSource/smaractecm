@@ -1,20 +1,20 @@
 <?xml version="1.0" ?>
 <components arch="linux-x86_64">
-	<asyn.AsynIP name="smaract1_s" port="localhost:9097"/>
+	<asyn.AsynIP name="smaract1_s" port="localhost:9099"/>
 	<smaractEcm.SmaractEcmController P="TEST-MO-SPOD-01" PORT="ecm1" R=":ECM1" TIMEOUT="0" asynAddr="0" asynPort="smaract1_s" maxNoAxes="6" movePollPeriod="500" notMovePollPeriod="3000"/>
-	<smaractEcm.Smarpod controller="ecm1" name="smarpod1"/>
-	<smaractEcm.Smarpod controller="ecm1" name="smarpod2"/>
+	<smaractEcm.Smarpod controller="ecm1" name="smarpod1" resolution=".000000001"/>
+	<smaractEcm.Smarpod controller="ecm1" name="smarpod2" resolution=".000000001"/>
 	<smaractEcm.SmaractSmarpodAxis axis_number="0" controller="ecm1" name="AX" p="TEST-MO-SPOD-01:A" r="X" smarpod="smarpod1" timeout="1"/>
 	<smaractEcm.SmaractSmarpodAxis axis_number="1" controller="ecm1" name="AY" p="TEST-MO-SPOD-01:A" r="Y" smarpod="smarpod1" timeout="1"/>
 	<smaractEcm.SmaractSmarpodAxis axis_number="2" controller="ecm1" name="AZ" p="TEST-MO-SPOD-01:A" r="Z" smarpod="smarpod1" timeout="1"/>
 	<smaractEcm.SmaractSmarpodAxis axis_number="3" controller="ecm1" name="ARX" p="TEST-MO-SPOD-01:A" r="RX" smarpod="smarpod1" timeout="1"/>
 	<smaractEcm.SmaractSmarpodAxis axis_number="4" controller="ecm1" name="ARY" p="TEST-MO-SPOD-01:A" r="RY" smarpod="smarpod1" timeout="1"/>
 	<smaractEcm.SmaractSmarpodAxis axis_number="5" controller="ecm1" name="ARZ" p="TEST-MO-SPOD-01:A" r="RZ" smarpod="smarpod1" timeout="1"/>
-	<motor.basic_asyn_motor ADDR="0" DESC="X Translation" DHLM="8000" DLLM="-8000" EGU="um" ERES="0.001" M="X" MRES="0.001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="3" SREV="200" TWV="10" VELO="50" gda_name="X" name="X"/>
-	<motor.basic_asyn_motor ADDR="1" DESC="Y Translation" DHLM="8000" DLLM="-8000" EGU="um" ERES="0.001" M="Y" MRES="0.001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="3" SREV="200" TWV="10" VELO="50" gda_name="Y" name="Y"/>
-	<motor.basic_asyn_motor ADDR="2" DESC="Z Translation" DHLM="8000" DLLM="-8000" EGU="um" ERES="0.001" M="Z" MRES="0.001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="3" SREV="200" TWV="10" VELO="50" gda_name="Z" name="Z"/>
-	<motor.basic_asyn_motor ADDR="3" DESC="X Rotation" DHLM="8000" DLLM="-8000" EGU="udeg" ERES="0.001" M="RX" MRES="0.001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="3" SREV="200" TWV="10" VELO="10" gda_name="RX" name="RX"/>
-	<motor.basic_asyn_motor ADDR="4" DESC="Y Rotation" DHLM="8000" DLLM="-8000" EGU="udeg" ERES="0.001" M="RY" MRES="0.001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="3" SREV="200" TWV="10" VELO="10" gda_name="RY" name="RY"/>
-	<motor.basic_asyn_motor ADDR="5" DESC="Z Rotation" DHLM="8000" DLLM="-8000" EGU="udeg" ERES="0.001" M="RZ" MRES="0.001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="3" SREV="200" TWV="10" VELO="10" gda_name="RZ" name="RZ"/>
+	<motor.basic_asyn_motor ADDR="0" DESC="X Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":X" MRES=".001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="X" name="X"/>
+	<motor.basic_asyn_motor ADDR="1" DESC="Y Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":Y" MRES=".001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Y" name="Y"/>
+	<motor.basic_asyn_motor ADDR="2" DESC="Z Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":Z" MRES=".001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Z" name="Z"/>
+	<motor.basic_asyn_motor ADDR="3" DESC="X Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":RX" MRES=".001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RX" name="RX"/>
+	<motor.basic_asyn_motor ADDR="4" DESC="Y Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":RY" MRES=".001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RY" name="RY"/>
+	<motor.basic_asyn_motor ADDR="5" DESC="Z Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":RZ" MRES=".001" P="TEST-MO-SPOD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RZ" name="RZ"/>
 	<records.asyn PORT="smaract1_s" record="TEST-SMAR:ASYN"/>
 </components>

@@ -33,6 +33,8 @@ protected:
     // axis number for smarpod 1=X 2=Y 3=Z 4=RX 5=RY 6=RZ
     int axisNum;
     int curPosition;
+    int previousPosition;
+    int previousDirection;
 };
 
 

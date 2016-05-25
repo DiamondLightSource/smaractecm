@@ -33,13 +33,13 @@ static std::map<std::string, Smarpod*> theSmarpods;
  * \param[in] movingPollPeriod The period at which to poll position while moving
  * \param[in] idlePollPeriod The period at which to poll position while not moving
  */
-asynStatus ecmControllerConfig(const char *portName,
-        const char* serialPortName, int serialPortAddress, int numAxes,
-        int movingPollPeriod, int idlePollPeriod)
+asynStatus ecmControllerConfig(const char *portName, const char* serialPortName,
+        int serialPortAddress, int numAxes, int movingPollPeriod,
+        int idlePollPeriod)
 {
-    EcmController* ctlr = new EcmController(portName,
-            serialPortName, serialPortAddress, numAxes,
-            movingPollPeriod / 1000.0, idlePollPeriod / 1000.0);
+    EcmController* ctlr = new EcmController(portName, serialPortName,
+            serialPortAddress, numAxes, movingPollPeriod / 1000.0,
+            idlePollPeriod / 1000.0);
     ctlr = NULL;   // To avoid compiler warning
     return asynSuccess;
 }
@@ -70,7 +70,8 @@ asynStatus mcsEcmAxisConfig(const char* ctlrName, int axisNum, int rotary)
  * param[in] ctlrName Asyn port name of the controller
  * param[in] name for this smarpod (to be used in axis declarations)
  */
-asynStatus smarpodConfig(const char* smarPodName, const char* ctlrName)
+asynStatus smarpodConfig(const char* smarPodName, const char* ctlrName,
+        double resolution)
 {
     asynStatus result = asynSuccess;
     EcmController* ctlr = (EcmController*) findAsynPortDriver(ctlrName);
@@ -82,7 +83,7 @@ asynStatus smarpodConfig(const char* smarPodName, const char* ctlrName)
     }
     else
     {
-        Smarpod* newpod = new Smarpod(ctlr);
+        Smarpod* newpod = new Smarpod(ctlr, resolution);
         theSmarpods[smarPodName] = newpod;
     }
     return result;
@@ -142,14 +143,14 @@ static const iocshArg ecmControllerConfigArg5 =
 static const iocshArg * const ecmControllerConfigArgs[] =
 { &ecmControllerConfigArg0, &ecmControllerConfigArg1, &ecmControllerConfigArg2,
         &ecmControllerConfigArg3, &ecmControllerConfigArg4,
-        &ecmControllerConfigArg5};
+        &ecmControllerConfigArg5 };
 static const iocshFuncDef ecmControllerConfigDef =
 { "ecmControllerConfig", 6, ecmControllerConfigArgs };
 
 static void ecmControllerConfigCallFunc(const iocshArgBuf *args)
 {
-    ecmControllerConfig(args[0].sval, args[1].sval, args[2].ival,
-            args[3].ival, args[4].ival, args[5].ival);
+    ecmControllerConfig(args[0].sval, args[1].sval, args[2].ival, args[3].ival,
+            args[4].ival, args[5].ival);
 }
 
 static const iocshArg mcsEcmAxisConfigArg0 =
@@ -169,21 +170,21 @@ static void mcsEcmAxisConfigCallFunc(const iocshArgBuf *args)
     mcsEcmAxisConfig(args[0].sval, args[1].ival, args[2].ival);
 }
 
-
 static const iocshArg smarpodConfigArg0 =
 { "smarpod name", iocshArgString };
 static const iocshArg smarpodConfigArg1 =
 { "controller port name", iocshArgString };
+static const iocshArg smarpodConfigArg2 =
+{ "smarpod axes resolution", iocshArgDouble };
 static const iocshArg * const smarpodConfigArgs[] =
-{ &smarpodConfigArg0};
+{ &smarpodConfigArg0, &smarpodConfigArg1, &smarpodConfigArg2 };
 static const iocshFuncDef smarpodConfigDef =
-{ "smarpodConfig", 2, smarpodConfigArgs };
+{ "smarpodConfig", 3, smarpodConfigArgs };
 
 static void smarpodConfigCallFunc(const iocshArgBuf *args)
 {
-    smarpodConfig(args[0].sval, args[1].sval);
+    smarpodConfig(args[0].sval, args[1].sval, args[2].dval);
 }
-
 
 static const iocshArg smarpodAxisConfigArg0 =
 { "controller port name", iocshArgString };
