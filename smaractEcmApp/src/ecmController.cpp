@@ -140,7 +140,6 @@ asynStatus EcmController::poll()
 
         ok = ok && command("%info version", version, RXBUFFERSIZE, TIMEOUT,
                         true);
-        printf("### INFO RESULT = %s\n", version);
         if (ok)
         {
             // Perform once only poll on the axes
@@ -159,6 +158,19 @@ asynStatus EcmController::poll()
                 printf("### VERSION = %s\n", version + info_header_len);
                 paramVersion = version + info_header_len;
                 paramConnected = true;
+            }
+        }
+    }
+
+    if(!paramConnected)
+    {
+        // show connection error on axes
+        for (int i = 0; i < numAxes_; i++)
+        {
+            SmaractAxis* pAxis = dynamic_cast<SmaractAxis*>(getAxis(i));
+            if (pAxis != NULL)
+            {
+                pAxis->setIntegerParam(this->motorStatusCommsError_ , 1);
             }
         }
     }
@@ -218,6 +230,18 @@ int EcmController::parseReturnCode(const char* rxbuffer)
     {
         result = atoi(rxbuffer + 1);
     }
+
+    return result;
+}
+
+bool EcmController::setUnit(int unitNum)
+{
+    char txBuffer[TXBUFFERSIZE];
+    char rxBuffer[RXBUFFERSIZE];
+    bool result = false;
+
+    snprintf(txBuffer, TXBUFFERSIZE, "%%unit %d", unitNum);
+    result = command(txBuffer, rxBuffer, RXBUFFERSIZE - 1, TIMEOUT);
 
     return result;
 }

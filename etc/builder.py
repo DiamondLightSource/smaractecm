@@ -54,7 +54,7 @@ class SmaractEcmController(_smaractEcmControllerTemplate, Device):
 
 class Smarpod(Device):
     '''Smarpod in smaract Ecm controller'''
-    def __init__(self, name, controller, resolution):
+    def __init__(self, name, controller, resolution, unit):
         self.__super.__init__()
         self.__dict__.update(locals())
         print "creating smarpod %s with controller %s, res %s" % \
@@ -65,12 +65,14 @@ class Smarpod(Device):
         name=Simple("Smarpod name", str),
         controller=Ident("Ecm controller port name", SmaractEcmController),
         resolution=Simple("Smarpod axes resolution in m" \
-                          " (defines smallest possible step)", float)
+                          " (defines smallest possible step)", float),
+        unit=Simple("Smarpod's unit number on the ECM", int)
     )
     def Initialise(self):
         print 'smarpodConfig("%(name)s",' \
             ' "%(controller)s", ' \
-            '"%(resolution)s")' % self.__dict__
+            '"%(resolution)s",' \
+            '"%(unit)d")' % self.__dict__
 
 class _smaractSmarpodAxisTemplate(AutoSubstitution):
     TemplateFile = 'smarpodAxis.template'
@@ -79,7 +81,7 @@ class _smaractSmarpodAxisTemplate(AutoSubstitution):
 class SmaractSmarpodAxis(_smaractSmarpodAxisTemplate, Device):
     '''Smarpod axis in smaract controller'''
     TemplateFile = 'smarpodAxis.template'
-    def __init__(self, name, controller, axis_number, smarpod, p, r, timeout):
+    def __init__(self, name, controller, axis_number, smarpod, smarpodAxis, p, r, timeout):
         self.__super.__init__(P=p, R=r, PORT=controller,
                               AXIS=axis_number, TIMEOUT=timeout)
         self.__dict__.update(locals())
@@ -88,8 +90,9 @@ class SmaractSmarpodAxis(_smaractSmarpodAxisTemplate, Device):
         __init__,
         name=Simple("axis name", str),
         controller=Ident("controller port name", SmaractEcmController),
-        axis_number=Simple("axis number", int),
+        axis_number=Simple("unique axis number for controller (match basic_asyn_motor axis no.)", int),
         smarpod=Simple("smarpod name", str),
+        smarpodAxis=Simple("smarpod axis (0=x 1=y 2=z 3=rx 4=ty 5=rz)", int),
         p=Simple("prefix for pvs in template", str),
         r=Simple("suffix for pvs in template", str),
         timeout=Simple("timeout for asyn", int)
@@ -97,4 +100,5 @@ class SmaractSmarpodAxis(_smaractSmarpodAxisTemplate, Device):
     def Initialise(self):
         print 'smarpodAxisConfig("%(controller)s",' \
             ' %(axis_number)d,' \
-            ' %(smarpod)s)' % self.__dict__
+            ' %(smarpod)s,' \
+            ' %(smarpodAxis)s)' % self.__dict__

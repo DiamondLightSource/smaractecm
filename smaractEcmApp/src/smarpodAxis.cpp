@@ -16,17 +16,19 @@
  * DONE moving status
  * DONE stop
  * DONE get resolution correct
- * velocity control
- * acceleration control??
- * sensor mode control (should be left default?)
- * Switching Unit number
+ * DONE velocity control
+ * DONE Switching Unit number
  * pivot point setting (and mode)
  * show error state on disconnect
+ * CSS GUI
+ * acceleration control??
+ * sensor mode control (should be left default?)
  *
  *************/
 
-SmarpodAxis::SmarpodAxis(EcmController* ctlr, int axisNum, Smarpod* smarpod) :
-        SmaractAxis(ctlr, axisNum), smarpod(smarpod)
+SmarpodAxis::SmarpodAxis(EcmController* ctlr, int axisNum, Smarpod* smarpod,
+        int smarpodAxis) :
+        SmaractAxis(ctlr, axisNum), smarpod(smarpod), smarpodAxis(smarpodAxis)
 {
 }
 
@@ -47,7 +49,7 @@ asynStatus SmarpodAxis::move(double position, int relative, double minVelocity,
     bool result;
 
     printf("### move pos %e, vel %e\n", position, maxVelocity);
-    result = smarpod->move(axisNum, position, relative, minVelocity,
+    result = smarpod->move(smarpodAxis, position, relative, minVelocity,
             maxVelocity, acceleration);
 
     return result ? asynSuccess : asynError;
@@ -61,9 +63,10 @@ bool SmarpodAxis::onceOnlyStatus(FreeLock& freeLock)
     if (!isConnected())
         return asynSuccess;
 
-    smarpod->connected(axisNum);
+    smarpod->connected(smarpodAxis);
 
     TakeLock takeLock(freeLock);
+    setIntegerParam(controller->motorStatusCommsError_, 0);
     setIntegerParam(controller->motorStatusHighLimit_, 0);
     setIntegerParam(controller->motorStatusLowLimit_, 0);
     setIntegerParam(controller->motorStatusHasEncoder_, 0);
@@ -92,7 +95,7 @@ bool SmarpodAxis::pollStatus(FreeLock& freeLock)
     int moving;
     int direction = 0;
 
-    result = smarpod->getAxis(axisNum, &curPosition, &moving, &homeStatus);
+    result = smarpod->getAxis(smarpodAxis, &curPosition, &moving, &homeStatus);
 
     if (result)
     {
@@ -104,6 +107,7 @@ bool SmarpodAxis::pollStatus(FreeLock& freeLock)
         setIntegerParam(controller->motorStatusHomed_, (int) homeStatus);
         setDoubleParam(controller->motorVelocity_,
                 (double) smarpod->getVelocity());
+        setIntegerParam(controller->motorStatusProblem_, 0);
 
         /* Use previous position and current position to calculate direction.*/
         if ((curPosition - previousPosition) > 0)
@@ -123,7 +127,7 @@ bool SmarpodAxis::pollStatus(FreeLock& freeLock)
         previousPosition = curPosition;
         previousDirection = direction;
 
-        controller->paramMotorStatusHomed[axisNum] = homeStatus != 0;
+        controller->paramMotorStatusHomed[smarpodAxis] = homeStatus != 0;
 
         this->callParamCallbacks();
     }
@@ -210,7 +214,7 @@ void SmarpodAxis::calibrateSensor(TakeLock& takeLock, int yes)
 //    if (!isConnected())
 //        return;
 //
-//    int oldYes = controller->paramCalibrateSensor[axisNum];
+//    int oldYes = controller->paramCalibrateSensor[smarpodAxis];
 //    if (oldYes == 0 && yes == 1)
 //    {
 //        int a;

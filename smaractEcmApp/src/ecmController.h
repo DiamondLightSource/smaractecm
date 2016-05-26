@@ -93,6 +93,7 @@ private:
     /* Methods for use by the axes */
     bool sendReceive(const char* tx, char* rx, size_t rxSize,
             double timeout, bool multi_line=false);
+    bool setUnit(int unitNum);
     bool command(const char* rx, char* tx, int txSize,
             double timeout, bool multi_line=false);
     bool command(const char* cmd, double inputs[], int inputCount,

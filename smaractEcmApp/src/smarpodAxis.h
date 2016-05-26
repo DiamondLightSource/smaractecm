@@ -14,7 +14,8 @@
 class SmarpodAxis: public SmaractAxis
 {
 public:
-    SmarpodAxis(EcmController* ctlr, int axisNum,  Smarpod* smarpod);
+    SmarpodAxis(EcmController* ctl0r, int axisNum, Smarpod* smarpod,
+            int smarpodAxis);
     virtual ~SmarpodAxis();
 
 public:
@@ -35,6 +36,7 @@ public:
 
 private:
     Smarpod* smarpod;
+    int smarpodAxis;
 };
 
 #endif /* SMARACTAPP_SRC_SMARPODAXIS_H_ */
