@@ -6,5 +6,6 @@ include
 lib
 O.*
 .pydevproject
-iocs/testSmaract
+iocs/test*
+
 
