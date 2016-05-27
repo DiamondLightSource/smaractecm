@@ -5,6 +5,8 @@
  *      Author: hgv27681
  */
 
+#include <math.h>
+#include <cfloat>
 #include "smarpod.h"
 
 #define MOVE_STATUS_MOVING 2
@@ -28,6 +30,7 @@ Smarpod::Smarpod(EcmController* ctlr, double resolution, int unit) :
     for (int i = 0; i < AXIS_COUNT; i++)
     {
         positions[i] = demandPositions[i] = 0;
+        moving[i] = false;
     }
 }
 
@@ -43,9 +46,9 @@ bool Smarpod::connected(int axisNum)
     if (axisNum == 0)
     {
         result &= ctlr->setUnit(unit);
-        result &= getCurrentPositions(true);
         result &= ctlr->command("ref?", NULL, 0, &referenced, 1, TIMEOUT);
         result &= ctlr->command("vel?", NULL, 0, &velocity, 1, TIMEOUT);
+        result &= getCurrentPositions(true);
     }
 
     return result;
@@ -66,7 +69,6 @@ bool Smarpod::move(int axisNum, double position, int relative,
     result &= ctlr->command("vel", &setVel, 1, NULL, 0, TIMEOUT);
     result &= ctlr->command("vel?", NULL, 0, &velocity, 1, TIMEOUT);
 
-    // TODO - put in speed and acceleration control
     if (result)
     {
         if (relative)
@@ -74,8 +76,12 @@ bool Smarpod::move(int axisNum, double position, int relative,
         else
             demandPositions[axisNum] = position * resolution;
 
-        result = ctlr->command("pos", demandPositions, AXIS_COUNT, NULL, 0,
+        result = ctlr->command("mov", demandPositions, AXIS_COUNT, NULL, 0,
         TIMEOUT);
+        if(result)
+        {
+            moving[axisNum] = true;
+        }
     }
     return result;
 }
@@ -92,10 +98,12 @@ bool Smarpod::getCurrentPositions(bool setDemands)
     if (setDemands)
     {
         for (i = 0; i < AXIS_COUNT; i++)
+        {
             demandPositions[i] = positions[i];
-        printf("### demands set\n");
+        }
     }
-    return result;
+
+    return true;
 }
 
 bool Smarpod::getAxis(int axisNum, double* curPosition, int* movingStatus,
@@ -111,10 +119,23 @@ bool Smarpod::getAxis(int axisNum, double* curPosition, int* movingStatus,
         result &= ctlr->command("mst?", NULL, 0, &moveStatus, 1, TIMEOUT);
         result &= getCurrentPositions();
         getAxisStatus = result;
+
+        if(moveStatus != MOVE_STATUS_MOVING)
+        {
+            for(int i = 0; i<AXIS_COUNT; moving[i++] = false);
+        }
+        else
+        {
+            for(int i = 0; i<AXIS_COUNT; i++)
+            {
+                if(fabs(positions[i]  - demandPositions[i]) < 1E-9)
+                    moving[i] = false;
+             }
+        }
     }
 
     *curPosition = positions[axisNum] / resolution;
-    *movingStatus = moveStatus == MOVE_STATUS_MOVING;
+    *movingStatus = moving[axisNum];
     *homeStatus = (bool) referenced;
 
     return getAxisStatus;

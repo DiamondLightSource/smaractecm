@@ -39,6 +39,7 @@ private:
     EcmController* ctlr;
     double positions[AXIS_COUNT];
     double demandPositions[AXIS_COUNT];
+    bool moving[AXIS_COUNT];
     int referenced;
     int moveStatus;
     double resolution;

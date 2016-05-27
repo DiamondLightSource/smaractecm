@@ -50,12 +50,14 @@ class Smarpod:
             if cmd == '%unit':
                 self.activeUnit = int(words[1]) == int(self.unit)
             elif self.activeUnit:
-                if cmd == "%info":
+                if not self.homed and cmd in ['pos?', 'mov']:
+                        output = '!550'  # not referenced
+                elif cmd == "%info":
                     if words[1] == "version":
                         output = "Versions:\r\n  System: 1.0.0"
                 elif cmd == "pos?":
                     output = ' '.join(map(str, self.axes_readbacks))
-                elif cmd == 'pos':
+                elif cmd == 'mov':
                     for i in range(6):
                         self.axes_demands[i] = float(words[i + 1])
                     self.start_motion()
@@ -78,7 +80,7 @@ class Smarpod:
                     self.axes_moving = [0, 0, 0, 0, 0, 0]
                     self.axes_demands = self.axes_readbacks
                 else:
-                    output = '!98'  # unknown command
+                    output = '!240'  # unknown command
         except Exception as e:
             print e.message
             output = '!99'  # unknown error
@@ -89,10 +91,8 @@ class Smarpod:
 
 
 pods = [Smarpod(0), Smarpod(1)]
-dont_print = ['pos?', 'mst?']
-
-
-# dont_print = ['xxx']
+#dont_print = ['pos?', 'mst?']
+dont_print = ['xxx']
 
 # Function for handling connections
 def client_thread(conn):
