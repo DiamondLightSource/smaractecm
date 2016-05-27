@@ -15,7 +15,7 @@
 #include "asynCommonSyncIO.h"
 #include "TakeLock.h"
 #include "FreeLock.h"
-#define DEBUG 0
+#define DEBUG 1
 
 #define info_header_len 19  // used to remove "Versions:\n " from %info target
 

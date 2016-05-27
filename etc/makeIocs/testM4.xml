@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<components arch="linux-x86_64">
+	<!--<asyn.AsynIP name="serial1" port="/dev/ttyUSB0"/>-->
+	<asyn.AsynSerial baud="115200" bits="8" crtscts="0" name="serial1" parity="N" port="/dev/ttyUSB0" stop="1"/>
+	<smaractEcm.SmaractEcmController P="BL21I-MO-POD-01" PORT="ecm1" R=":ECM1" TIMEOUT="0" asynAddr="0" asynPort="serial1" maxNoAxes="12" movePollPeriod="500" notMovePollPeriod="3000"/>
+	<smaractEcm.Smarpod controller="ecm1" name="M4.Smarpod" resolution=".000000001" unit="0"/>
+	<smaractEcm.SmaractSmarpodAxis axis_number="0" controller="ecm1" name="M4.Smarpod.X" p="BL21I-MO-POD-01:A" r="X" smarpod="M4.Smarpod" smarpodAxis="0" timeout="1"/>
+	<smaractEcm.SmaractSmarpodAxis axis_number="1" controller="ecm1" name="M4.Smarpod.Y" p="BL21I-MO-POD-01:A" r="Y" smarpod="M4.Smarpod" smarpodAxis="1" timeout="1"/>
+	<smaractEcm.SmaractSmarpodAxis axis_number="2" controller="ecm1" name="M4.Smarpod.Z" p="BL21I-MO-POD-01:A" r="Z" smarpod="M4.Smarpod" smarpodAxis="2" timeout="1"/>
+	<smaractEcm.SmaractSmarpodAxis axis_number="3" controller="ecm1" name="M4.Smarpod.RX" p="BL21I-MO-POD-01:A" r="RX" smarpod="M4.Smarpod" smarpodAxis="3" timeout="1"/>
+	<smaractEcm.SmaractSmarpodAxis axis_number="4" controller="ecm1" name="M4.Smarpod.RY" p="BL21I-MO-POD-01:A" r="RY" smarpod="M4.Smarpod" smarpodAxis="4" timeout="1"/>
+	<smaractEcm.SmaractSmarpodAxis axis_number="5" controller="ecm1" name="M4.Smarpod.RZ" p="BL21I-MO-POD-01:A" r="RZ" smarpod="M4.Smarpod" smarpodAxis="5" timeout="1"/>
+	<motor.basic_asyn_motor ADDR="0" DESC="X Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":X" MRES=".001" P="BL21I-MO-POD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="X" name="S1X"/>
+	<motor.basic_asyn_motor ADDR="1" DESC="Y Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":Y" MRES=".001" P="BL21I-MO-POD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Y" name="S1Y"/>
+	<motor.basic_asyn_motor ADDR="2" DESC="Z Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":Z" MRES=".001" P="BL21I-MO-POD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Z" name="S1Z"/>
+	<motor.basic_asyn_motor ADDR="3" DESC="X Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":RX" MRES=".001" P="BL21I-MO-POD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="RX" name="S1RX"/>
+	<motor.basic_asyn_motor ADDR="4" DESC="Y Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":RY" MRES=".001" P="BL21I-MO-POD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="RY" name="S1RY"/>
+	<motor.basic_asyn_motor ADDR="5" DESC="Z Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":RZ" MRES=".001" P="BL21I-MO-POD-01" PORT="ecm1" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="RZ" name="S1RZ"/>
+</components>

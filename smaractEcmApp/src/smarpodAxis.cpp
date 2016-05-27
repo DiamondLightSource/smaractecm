@@ -19,10 +19,10 @@
  * DONE velocity control
  * DONE Switching Unit number
  * pivot point setting (and mode)
- * show error state on disconnect
- * CSS GUI
- * acceleration control??
  * sensor mode control (should be left default?)
+ * DONE show error state on disconnect
+ * CSS GUI - after testing with hardware
+ * acceleration control??
  *
  *************/
 
