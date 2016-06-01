@@ -28,6 +28,12 @@
  *  DONE need to cope with errors before referencing - dont treat errors as disconect
  *  note speeds are linear actuator - move speed control to smarpod?
  *  DONE possibly allow moves during move - show only commanded axes moving ??
+ * 
+ * Bugs
+ * loss of comms does not show in real hardware (does on sim?)
+ * PINI of velocity and pivot point not working (on real HW)
+ * getting tdir on zrotation axis (and others?) -- try doinf and increase on NTMF 
+ *      for all axes
  *************/
 
 SmarpodAxis::SmarpodAxis(EcmController* ctlr, int axisNum, Smarpod* smarpod,

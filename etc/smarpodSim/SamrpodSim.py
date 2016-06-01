@@ -91,8 +91,8 @@ class Smarpod:
 
 
 pods = [Smarpod(0), Smarpod(1)]
-#dont_print = ['pos?', 'mst?']
-dont_print = ['xxx']
+dont_print = ['pos?', 'mst?', '%unit']
+#dont_print = ['xxx']
 
 # Function for handling connections
 def client_thread(conn):

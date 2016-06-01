@@ -1,0 +1,131 @@
+# This template provides support for the settings on smarpod that apply to
+# the whole smarpod rather than one of its axes
+# Parameters:
+#%  macro, P, The base name (eg B21I-MO-POD-01)
+#%  macro, TIMEOUT, timeout for port comms
+#%  macro, X, user name for the X Axis
+#%  macro, Y, user name for the Y Axis
+#%  macro, Z, user name for the Z Axis
+#%  macro, name, object and gui association name (also used as asyn port name)
+#%  gui, $(name), edm, spacefab.edl, P=$(P)
+
+
+record(ai, "$(P):PIVOT:$(X=X)_RBV")
+{
+  field(SCAN, "I/O Intr")
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_X")
+}
+
+#% archiver 10 Monitor
+#% autosave 2 VAL
+record(ao, "$(P):PIVOT:$(X=X)")
+{
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_X")
+  field(PINI,  "1")
+  field(VAL,0)
+}
+
+record(ai, "$(P):PIVOT:$(Y=Y)_RBV")
+{
+  field(SCAN, "I/O Intr")
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Y")
+}
+
+#% archiver 10 Monitor
+#% autosave 2 VAL
+record(ao, "$(P):PIVOT:$(Y=Y)")
+{
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Y")
+  field(PINI,  "1")
+  field(VAL,0)
+}
+
+record(ai, "$(P):PIVOT:$(Z=Z)_RBV")
+{
+  field(SCAN, "I/O Intr")
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Z")
+}
+
+#% archiver 10 Monitor
+#% autosave 2 VAL
+record(ao, "$(P):PIVOT:$(Z=Z)")
+{
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Z")
+  field(PINI,  "1")
+  field(VAL,0)
+}
+
+record(ai, "$(P):VELOCITY_RBV")
+{
+  field(SCAN, "I/O Intr")
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn($(name),0,$(TIMEOUT=1))VELOCITY")
+}
+
+#% archiver 10 Monitor
+#% autosave 2 VAL
+record(ao, "$(P):VELOCITY")
+{
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))VELOCITY")
+  field(PINI,  "1")
+  field(VAL,0.0006)
+}
+
+#% archiver 10 Monitor
+#% autosave 1 VAL
+record(bo, "$(P):PIVOTMODE")
+{
+    field(DTYP, "asynInt32")
+    field(VAL,  "0")
+    field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_MODE")
+    field(PINI, "1")
+    field(ZNAM, "Stage Relative")
+    field(ONAM, "Fixed")
+    field(VAL,0)
+}
+
+record(bi, "$(P):PIVOTMODE_RBV")
+{
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_MODE")
+    field(ZNAM, "Stage Relative")
+    field(ONAM, "Fixed")
+}
+
+#% archiver 10 Monitor
+#% autosave 1 VAL
+record(mbbo, "$(P):ENCODERMODE")
+{
+    field(DTYP, "asynInt32")
+    field(VAL,  "0")
+    field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))ENCODER_MODE")
+    field(PINI, "1")
+    field(ZRST, "Disabled")
+    field(ONST, "Enabled")
+    field(TWST, "Power Save")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(VAL,2)
+}
+
+record(mbbi, "$(P):ENCODERMODE_RBV")
+{
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(name),0,$(TIMEOUT=1))ENCODER_MODE")
+    field(ZRST, "Disabled")
+    field(ONST, "Enabled")
+    field(TWST, "Power Save")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+}

@@ -4,7 +4,7 @@
 # Parameters:
 # % macro,  P,       EPICS name prefix
 # % macro,  R,       EPICS name suffix
-# % macro,  PORT,    Asyn port
+# % macro,  controller,    Asyn port of controller
 # % macro,  AXIS,    Axis number
 # % macro,  TIMEOUT, Timeout
 record(bo, "$(P)$(R):CALIBRATE")
@@ -12,7 +12,7 @@ record(bo, "$(P)$(R):CALIBRATE")
     field(SCAN, "Passive")
     field(DTYP, "asynInt32")
     field(VAL,  "0")
-    field(OUT,  "@asyn($(PORT),$(AXIS),$(TIMEOUT))CALIBRATE_SENSOR")
+    field(OUT,  "@asyn($(controller),$(AXIS),$(TIMEOUT=1))CALIBRATE_SENSOR")
     field(PINI, "1")
     field(ZNAM, "Idle")
     field(ONAM, "Calibrate")
@@ -25,7 +25,7 @@ record(bo, "$(P)$(R):ACTIVEHOLD")
     field(SCAN, "Passive")
     field(DTYP, "asynInt32")
     field(VAL,  "0")
-    field(OUT,  "@asyn($(PORT),$(AXIS),$(TIMEOUT))ACTIVE_HOLD")
+    field(OUT,  "@asyn($(controller),$(AXIS),$(TIMEOUT=1))ACTIVE_HOLD")
     field(PINI, "1")
     field(ZNAM, "Off")
     field(ONAM, "On")
@@ -38,14 +38,14 @@ record(longout, "$(P)$(R):PHYSAXIS")
     field(DTYP, "asynInt32")
     field(PINI, "1")
     field(VAL,  "$(AXIS)")
-    field(OUT,  "@asyn($(PORT),$(AXIS),$(TIMEOUT))PHYS_AXIS")
+    field(OUT,  "@asyn($(controller),$(AXIS),$(TIMEOUT=1))PHYS_AXIS")
 }
 
 record(longin, "$(P)$(R):PHYSAXIS_RBV")
 {
     field(SCAN, "I/O Intr")
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(AXIS),$(TIMEOUT))PHYS_AXIS")
+    field(INP,  "@asyn($(controller),$(AXIS),$(TIMEOUT=1))PHYS_AXIS")
 }
 
 record(bi, "$(P)$(R):CONNECTED")
@@ -53,7 +53,7 @@ record(bi, "$(P)$(R):CONNECTED")
     field(SCAN, "I/O Intr")
     field(DTYP, "asynInt32")
     field(VAL,  "0")
-    field(INP,  "@asyn($(PORT),$(AXIS),$(TIMEOUT))AXIS_CONNECTED")
+    field(INP,  "@asyn($(controller),$(AXIS),$(TIMEOUT=1))AXIS_CONNECTED")
     field(ZNAM, "Disconnected")
     field(ONAM, "Connected")
 }

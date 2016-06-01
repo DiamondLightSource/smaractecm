@@ -15,11 +15,13 @@
 #include "ecmController.h"
 
 #define AXIS_COUNT 6
+#define PORTNAME "Smarpod%d"
+#define PORTNAME_MAX 20
 
-class Smarpod
+class Smarpod: public asynPortDriver
 {
 public:
-    Smarpod(EcmController* ctlr, double resolution, int unit);
+    Smarpod(const char* port, EcmController* ctlr, double resolution, int unit);
     virtual ~Smarpod();
 
     bool move(int axisNum, double position, int relative, double minVelocity,
@@ -32,8 +34,13 @@ public:
     bool getAxis(int axisNum, double* curPosition, int* movingStatus,
             bool* homeStatus);
     double getVelocity();
+    virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+    virtual asynStatus writeFloat64(asynUser *pasynUser, epicsFloat64 value);
+    virtual asynStatus readFloat64(asynUser *pasynUser, epicsFloat64 *value);
+    virtual asynStatus readInt32(asynUser *pasynUser, epicsInt32 *value);
+
 private:
-    bool getCurrentPositions(bool setDemands=false);
+    bool getCurrentPositions(bool setDemands = false);
 
 private:
     EcmController* ctlr;
@@ -46,6 +53,23 @@ private:
     int unit;
     double velocity;
     bool getAxisStatus;
+
+private:
+    static const char* namePIVOT_POS_X;
+    static const char* namePIVOT_POS_Y;
+    static const char* namePIVOT_POS_Z;
+    static const char* namePIVOT_TYPE;
+    static const char* nameVELOCITY;
+    static const char* nameENCODER_MODE;
+
+    int FIRST_PARAM;
+    int indexPIVOT_POS_X;
+    int indexPIVOT_POS_Y;
+    int indexPIVOT_POS_Z;
+    int indexPIVOT_TYPE;
+    int indexVELOCITY;
+    int indexENCODER_MODE;
+    int LAST_PARAM;
 };
 
 #endif /* SMARACTAPP_SRC_SMARPOD_H_ */

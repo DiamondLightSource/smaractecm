@@ -14,6 +14,7 @@ include $(TOP)/configure/CONFIG
 DB += smaractEcmController.template
 DB += smaractEcmAxis.template
 DB += smarpodAxis.template
+DB += smarpod.template
 
 #----------------------------------------------------
 # In a Diamond IOC Application, build db files from

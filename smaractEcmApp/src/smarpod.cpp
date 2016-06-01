@@ -6,23 +6,42 @@
  */
 
 #include <math.h>
+#include <string.h>
 #include <cfloat>
 #include "smarpod.h"
 
 #define MOVE_STATUS_MOVING 2
 #define HOMING_TIMEOUT 20
 
+// Parameter name definitions
+const char* Smarpod::namePIVOT_POS_X = "PIVOT_POS_X";
+const char* Smarpod::namePIVOT_POS_Y = "PIVOT_POS_Y";
+const char* Smarpod::namePIVOT_POS_Z = "PIVOT_POS_Z";
+const char* Smarpod::namePIVOT_TYPE = "PIVOT_MODE";
+const char* Smarpod::nameVELOCITY = "VELOCITY";
+const char* Smarpod::nameENCODER_MODE = "ENCODER_MODE";
+#define NUM_PARAMS (&LAST_PARAM - &FIRST_PARAM - 1)
+
 /*
  * Internally we hold all positions velocities in native ECM format
  * which is in meters or degrees
- * All public interfaces to this class deliver values in 'counts'
- * which is set by the resolution parameter
- * A sensible setting for resolution is 10^-12 this means one step in
+ * All public interfaces to this class deliver values in motor record 'counts'
+ * which is determined by the resolution parameter
+ *
+ * A sensible setting for resolution is 10^-12 This means one step in
  * the motor record represents a 1nm move (or 10^-12 degrees for angle axes)
+ * This also means that the mres should be set to .001 for egus = microns
+ * or .000001 for egus = mm
  *
  */
-Smarpod::Smarpod(EcmController* ctlr, double resolution, int unit) :
-        ctlr(ctlr), referenced(false), moveStatus(0), resolution(resolution), unit(
+Smarpod::Smarpod(const char* port, EcmController* ctlr, double resolution,
+        int unit) :
+        asynPortDriver(port, 1 /*maxAddr*/, NUM_PARAMS,
+        asynInt32Mask | asynFloat64Mask | asynDrvUserMask | asynOctetMask,
+        asynInt32Mask | asynFloat64Mask | asynOctetMask,
+        ASYN_CANBLOCK, /*ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=0 */
+        1, /*autoConnect*/0, /*default priority */0 /* stack size*/), ctlr(
+                ctlr), referenced(false), moveStatus(0), resolution(resolution), unit(
                 unit), velocity(0), getAxisStatus(false)
 {
     printf("### initializing smarpod with controller %s, res %e, unit %d\n",
@@ -32,6 +51,13 @@ Smarpod::Smarpod(EcmController* ctlr, double resolution, int unit) :
         positions[i] = demandPositions[i] = 0;
         moving[i] = false;
     }
+
+    createParam(namePIVOT_POS_X, asynParamFloat64, &indexPIVOT_POS_X);
+    createParam(namePIVOT_POS_Y, asynParamFloat64, &indexPIVOT_POS_Y);
+    createParam(namePIVOT_POS_Z, asynParamFloat64, &indexPIVOT_POS_Z);
+    createParam(namePIVOT_TYPE, asynParamInt32, &indexPIVOT_TYPE);
+    createParam(nameVELOCITY, asynParamFloat64, &indexVELOCITY);
+    createParam(nameENCODER_MODE, asynParamInt32, &indexENCODER_MODE);
 }
 
 Smarpod::~Smarpod()
@@ -59,15 +85,15 @@ double Smarpod::getVelocity()
     return velocity / resolution;
 }
 
+/*************************************************************
+ * Velocity is ignored here - it is set globally for a smarpod
+ *************************************************************/
 bool Smarpod::move(int axisNum, double position, int relative,
         double minVelocity, double maxVelocity, double acceleration)
 {
     bool result = true;
 
-    double setVel = maxVelocity * resolution;
     result &= ctlr->setUnit(unit);
-    result &= ctlr->command("vel", &setVel, 1, NULL, 0, TIMEOUT);
-    result &= ctlr->command("vel?", NULL, 0, &velocity, 1, TIMEOUT);
 
     if (result)
     {
@@ -78,7 +104,7 @@ bool Smarpod::move(int axisNum, double position, int relative,
 
         result = ctlr->command("mov", demandPositions, AXIS_COUNT, NULL, 0,
         TIMEOUT);
-        if(result)
+        if (result)
         {
             moving[axisNum] = true;
         }
@@ -120,17 +146,18 @@ bool Smarpod::getAxis(int axisNum, double* curPosition, int* movingStatus,
         result &= getCurrentPositions();
         getAxisStatus = result;
 
-        if(moveStatus != MOVE_STATUS_MOVING)
+        if (moveStatus != MOVE_STATUS_MOVING)
         {
-            for(int i = 0; i<AXIS_COUNT; moving[i++] = false);
+            for (int i = 0; i < AXIS_COUNT; moving[i++] = false)
+                ;
         }
         else
         {
-            for(int i = 0; i<AXIS_COUNT; i++)
+            for (int i = 0; i < AXIS_COUNT; i++)
             {
-                if(fabs(positions[i]  - demandPositions[i]) < 1E-9)
+                if (fabs(positions[i] - demandPositions[i]) < 1E-9)
                     moving[i] = false;
-             }
+            }
         }
     }
 
@@ -147,7 +174,7 @@ bool Smarpod::home()
 
     result &= ctlr->setUnit(unit);
     result = ctlr->command("ref", (int*) NULL, 0, (int*) NULL, 0,
-            HOMING_TIMEOUT);
+    HOMING_TIMEOUT);
     result &= ctlr->command("ref?", NULL, 0, &referenced, 1, TIMEOUT);
 
     // read back current positions and reset demands
@@ -165,6 +192,88 @@ bool Smarpod::stop()
 
     // read back current positions and reset demands
     result &= getCurrentPositions(true);
+
+    return result;
+}
+
+/*********************************
+ * Overrides for Asy Port Driver
+ *
+ *********************************/
+asynStatus Smarpod::writeInt32(asynUser *pasynUser, epicsInt32 value)
+{
+    asynStatus result = asynPortDriver::writeInt32(pasynUser, value);
+
+    int parameter = pasynUser->reason;
+    if (parameter == indexENCODER_MODE)
+    {
+
+    }
+    else if (parameter == indexPIVOT_TYPE)
+    {
+
+    }
+
+    return result;
+}
+
+asynStatus Smarpod::readInt32(asynUser *pasynUser, epicsInt32 *value)
+{
+    asynStatus result = asynPortDriver::readInt32(pasynUser, value);
+
+    int parameter = pasynUser->reason;
+    if (parameter == indexENCODER_MODE)
+    {
+
+    }
+    else if (parameter == indexPIVOT_TYPE)
+    {
+
+    }
+
+    return result;
+}
+
+asynStatus Smarpod::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
+{
+    asynStatus result = asynPortDriver::writeFloat64(pasynUser, value);
+    bool ok = true;
+
+    int parameter = pasynUser->reason;
+    if (parameter == indexPIVOT_POS_X)
+    {
+
+    }
+    else if (parameter == indexVELOCITY)
+    {
+        ok &= ctlr->command("vel", &value, 1, NULL, 0, TIMEOUT);
+    }
+    else if (parameter == indexENCODER_MODE)
+    {
+        ok &= ctlr->command("sen", &value, 1, NULL, 0, TIMEOUT);
+    }
+
+    return result;
+}
+
+asynStatus Smarpod::readFloat64(asynUser *pasynUser, epicsFloat64 *value)
+{
+    asynStatus result = asynPortDriver::readFloat64(pasynUser, value);
+    bool ok = true;
+
+    int parameter = pasynUser->reason;
+    if (parameter == indexPIVOT_POS_X)
+    {
+
+    }
+    else if (parameter == indexVELOCITY)
+    {
+        ok &= ctlr->command("vel?", NULL, 0, value, 1, TIMEOUT);
+    }
+    else if (parameter == indexENCODER_MODE)
+    {
+        ok &= ctlr->command("sen?", NULL, 0, value, 1, TIMEOUT);
+    }
 
     return result;
 }

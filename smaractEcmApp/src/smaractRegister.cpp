@@ -83,7 +83,7 @@ asynStatus smarpodConfig(const char* smarPodName, const char* ctlrName,
     }
     else
     {
-        Smarpod* newpod = new Smarpod(ctlr, resolution, unit);
+        Smarpod* newpod = new Smarpod(smarPodName, ctlr, resolution, unit);
         theSmarpods[smarPodName] = newpod;
     }
     return result;
