@@ -1,5 +1,4 @@
-/*
- * smarPodUnit.cpp
+ /* smarPodUnit.cpp
  *
  *  Created on: 10 Feb 2016
  *      Author: hgv27681
@@ -12,6 +11,7 @@
 
 #define MOVE_STATUS_MOVING 2
 #define HOMING_TIMEOUT 20
+#define MM_CONVERT 1000.0
 
 // Parameter name definitions
 const char* Smarpod::namePIVOT_POS_X = "PIVOT_POS_X";
@@ -67,17 +67,35 @@ Smarpod::~Smarpod()
 
 bool Smarpod::connected(int axisNum)
 {
-    bool result = true;
+    bool ok = true;
+    int intVal;
+    double doubleVal;
 
     if (axisNum == 0)
     {
-        result &= ctlr->setUnit(unit);
-        result &= ctlr->command("ref?", NULL, 0, &referenced, 1, TIMEOUT);
-        result &= ctlr->command("vel?", NULL, 0, &velocity, 1, TIMEOUT);
-        result &= getCurrentPositions(true);
+        ok &= ctlr->setUnit(unit);
+
+        // read in properties that have no asyn parameter
+        ok &= ctlr->command("ref?", NULL, 0, &referenced, 1, TIMEOUT);
+
+        // read back in all parameters that are not polled
+        ok &= ctlr->command("vel?", NULL, 0, &doubleVal, 1, TIMEOUT);
+        doubleVal *= MM_CONVERT;
+        setDoubleParam(indexVELOCITY, doubleVal);
+
+        ok &= ctlr->command("sen?", NULL, 0, &intVal, 1, TIMEOUT);
+        setIntegerParam(indexENCODER_MODE, intVal);
+
+        ok &= ctlr->command("pvm?", NULL, 0, &intVal, 1, TIMEOUT);
+        setIntegerParam(indexPIVOT_TYPE, intVal);
+
+        // read in positions and reset demands
+        ok &= getCurrentPositions(true);
+
+        callParamCallbacks();
     }
 
-    return result;
+    return ok;
 }
 
 double Smarpod::getVelocity()
@@ -202,77 +220,60 @@ bool Smarpod::stop()
  *********************************/
 asynStatus Smarpod::writeInt32(asynUser *pasynUser, epicsInt32 value)
 {
-    asynStatus result = asynPortDriver::writeInt32(pasynUser, value);
-
+    asynStatus result = asynSuccess;
+    bool ok = true;
     int parameter = pasynUser->reason;
+
     if (parameter == indexENCODER_MODE)
     {
-
+        ok &= ctlr->setUnit(unit);
+        ok &= ctlr->command("sen", &value, 1, NULL, 0, TIMEOUT);
     }
     else if (parameter == indexPIVOT_TYPE)
     {
+        ok &= ctlr->setUnit(unit);
+        ok &= ctlr->command("pvm", &value, 1, NULL, 0, TIMEOUT);
+    }
 
+    // set the parameter and do call backs (base class does this)
+    result = asynPortDriver::writeInt32(pasynUser, value);
+
+    if(!ok)
+    {
+        result = asynError;
     }
 
     return result;
 }
 
-asynStatus Smarpod::readInt32(asynUser *pasynUser, epicsInt32 *value)
-{
-    asynStatus result = asynPortDriver::readInt32(pasynUser, value);
-
-    int parameter = pasynUser->reason;
-    if (parameter == indexENCODER_MODE)
-    {
-
-    }
-    else if (parameter == indexPIVOT_TYPE)
-    {
-
-    }
-
-    return result;
-}
 
 asynStatus Smarpod::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
 {
-    asynStatus result = asynPortDriver::writeFloat64(pasynUser, value);
+    asynStatus result = asynSuccess;
     bool ok = true;
-
     int parameter = pasynUser->reason;
+
+    double vel = value / MM_CONVERT;
+
     if (parameter == indexPIVOT_POS_X)
     {
 
     }
     else if (parameter == indexVELOCITY)
     {
-        ok &= ctlr->command("vel", &value, 1, NULL, 0, TIMEOUT);
-    }
-    else if (parameter == indexENCODER_MODE)
-    {
-        ok &= ctlr->command("sen", &value, 1, NULL, 0, TIMEOUT);
+        ok &= ctlr->setUnit(unit);
+        ok &= ctlr->command("vel", &vel, 1, NULL, 0, TIMEOUT);
+        // make sure the controller was happy with this value
+        ok &= ctlr->command("vel?", NULL, 0, &vel, 1, TIMEOUT);
+        value = vel * MM_CONVERT;
     }
 
-    return result;
-}
+    // set the parameter and do call backs (base class does this)
+    result = asynPortDriver::writeFloat64(pasynUser, value);
 
-asynStatus Smarpod::readFloat64(asynUser *pasynUser, epicsFloat64 *value)
-{
-    asynStatus result = asynPortDriver::readFloat64(pasynUser, value);
-    bool ok = true;
-
-    int parameter = pasynUser->reason;
-    if (parameter == indexPIVOT_POS_X)
+    if(!ok)
     {
-
-    }
-    else if (parameter == indexVELOCITY)
-    {
-        ok &= ctlr->command("vel?", NULL, 0, value, 1, TIMEOUT);
-    }
-    else if (parameter == indexENCODER_MODE)
-    {
-        ok &= ctlr->command("sen?", NULL, 0, value, 1, TIMEOUT);
+        result = asynError;
     }
 
     return result;

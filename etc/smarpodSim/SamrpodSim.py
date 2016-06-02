@@ -17,8 +17,11 @@ class Smarpod:
         self.num_axes = 6
         self.axes_readbacks = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.axes_demands = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        self.pivot = [0.0, 0.0, 0.0]
         self.axes_velocity = 0.0003
         self.axes_moving = [0, 0, 0, 0, 0, 0]
+        self.pivot_mode = 0
+        self.encoder_mode = 2
         self.homed = False
         self.unit = unit
         self.activeUnit = 0 == int(self.unit)
@@ -70,8 +73,8 @@ class Smarpod:
                     output = int(self.homed)
                 elif cmd == 'vel':
                     self.axes_velocity = float(words[1])
-                    if self.axes_velocity > .001:
-                        self.axes_velocity = .001
+                    if self.axes_velocity > .01:
+                        self.axes_velocity = .01
                 elif cmd == 'vel?':
                     output = self.axes_velocity
                 elif cmd == 'mst?':
@@ -79,6 +82,19 @@ class Smarpod:
                 elif cmd == 'stop':
                     self.axes_moving = [0, 0, 0, 0, 0, 0]
                     self.axes_demands = self.axes_readbacks
+                elif cmd == 'pvm?':
+                    output = int(self.pivot_mode)
+                elif cmd == 'pvm':
+                    self.pivot_mode = int(words[1])
+                elif cmd == 'sen?':
+                    output = float(self.encoder_mode)
+                elif cmd == 'sen':
+                    self.encoder_mode = float(words[1])
+                elif cmd == 'piv':
+                    for i in range(3):
+                        self.pivot[i] = float(words[i + 1])
+                elif cmd == 'piv?':
+                    output = ' '.join(map(str, self.pivot))
                 else:
                     output = '!240'  # unknown command
         except Exception as e:
