@@ -155,7 +155,6 @@ asynStatus EcmController::poll()
             {
                 // Everything ok, update parameters
                 TakeLock again(freeLock);
-                printf("### VERSION = %s\n", version + info_header_len);
                 paramVersion = version + info_header_len;
                 paramConnected = true;
             }

@@ -44,8 +44,6 @@ Smarpod::Smarpod(const char* port, EcmController* ctlr, double resolution,
                 ctlr), referenced(false), moveStatus(0), resolution(resolution), unit(
                 unit), velocity(0), getAxisStatus(false)
 {
-    printf("### initializing smarpod with controller %s, res %e, unit %d\n",
-            ctlr->portName, resolution, unit);
     for (int i = 0; i < AXIS_COUNT; i++)
     {
         positions[i] = demandPositions[i] = 0;

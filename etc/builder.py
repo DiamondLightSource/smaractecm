@@ -31,7 +31,6 @@ class SmaractEcmController(_smaractEcmControllerTemplate, Device):
     
     def __init__(self, asynPort, asynAddr, maxNoAxes,
                  movePollPeriod, notMovePollPeriod, **args):
-        print "### SmaractEcmController INIT super with :", args
         self.__super.__init__(**args)
         self.__dict__.update(**args)
         self.__dict__.update(locals())
@@ -58,9 +57,6 @@ class _smarpodTemplate(AutoSubstitution):
 class Smarpod(_smarpodTemplate, Device):
     '''Smarpod in smaract Ecm controller'''
     def __init__(self, controller, resolution, unit, **args):
-        print "creating smarpod %s with controller %s, res, %s" % \
-            (args['name'], controller, resolution)
-        print "### smarpod INIT super with :", args
         self.__super.__init__(**args)
         self.__dict__.update(**args)
         self.__dict__.update(locals())
@@ -85,7 +81,6 @@ class _smaractSmarpodAxisTemplate(AutoSubstitution):
 class SmaractSmarpodAxis(_smaractSmarpodAxisTemplate, Device):
     '''Smarpod axis in smaract controller'''
     def __init__(self, name, smarpod, smarpodAxis, **args):
-        print "### SmaractSmarpodAxis INIT super with :", args
         self.__super.__init__(**args)
         self.__dict__.update(**args)
         self.__dict__.update(locals())

@@ -6,6 +6,10 @@
  */
 
 /*
+ * This module is currently unused
+ * it is intended to support MCS modules controlled via ECM for the future.
+ * To control MCS modules directly use the 'smaract' driver
+ *
  * NOTE :
  * It is necessary to use the
  * 		setDoubleParam(controller->motorPosition_, (double)curPosition);
