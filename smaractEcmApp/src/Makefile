@@ -8,6 +8,9 @@ include $(TOP)/configure/CONFIG
 
 LIBRARY_IOC = smaractEcm
 
+# do not optimize the code so I can use a debugger
+USR_CXXFLAGS += -O0
+
 # smaractEcm.dbd will be installed into <top>/dbd
 DBD += smaractEcm.dbd
 
