@@ -15,6 +15,10 @@
 #include "ecmController.h"
 
 #define AXIS_COUNT 6
+#define DIMENSIONS_COUNT 3
+#define DIMX 0
+#define DIMY 1
+#define DIMZ 2
 #define PORTNAME "Smarpod%d"
 #define PORTNAME_MAX 20
 
@@ -39,11 +43,13 @@ public:
 
 private:
     bool getCurrentPositions(bool setDemands = false);
+    bool  getPivots();
 
 private:
     EcmController* ctlr;
     double positions[AXIS_COUNT];
     double demandPositions[AXIS_COUNT];
+    double pivotPositions[DIMENSIONS_COUNT];
     bool moving[AXIS_COUNT];
     int referenced;
     int moveStatus;

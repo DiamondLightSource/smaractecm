@@ -1,31 +1,31 @@
 <?xml version="1.0" ?>
 <components arch="linux-x86_64">
 	<asyn.AsynSerial baud="115200" bits="8" crtscts="0" name="serial1" parity="N" port="/dev/ttyUSB0" stop="1"/>
-	<smaractEcm.SmaractEcmController P="TEST-MO-SPOD-01" PORT="ecm2" R=":ECM2" TIMEOUT="1" asynAddr="0" asynPort="serial1" maxNoAxes="12" movePollPeriod="500" notMovePollPeriod="3000"/>
-	<smaractEcm.Smarpod P="TEST-MO-SPOD-01" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="ecm2" name="smarpod_L" resolution=".000000001" unit="0"/>
-	<smaractEcm.Smarpod P="TEST-MO-SPOD-02" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="ecm2" name="smarpod_R" resolution=".000000001" unit="1"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="0" P="TEST-MO-ECM-01" R=":X" TIMEOUT="1" controller="ecm2" name="S1AX" smarpod="smarpod_L" smarpodAxis="0"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="1" P="TEST-MO-ECM-01" R=":Y" TIMEOUT="1" controller="ecm2" name="S1AY" smarpod="smarpod_L" smarpodAxis="1"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="2" P="TEST-MO-ECM-01" R=":Z" TIMEOUT="1" controller="ecm2" name="S1AZ" smarpod="smarpod_L" smarpodAxis="2"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="3" P="TEST-MO-ECM-01" R=":RX" TIMEOUT="1" controller="ecm2" name="S1ARX" smarpod="smarpod_L" smarpodAxis="3"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="4" P="TEST-MO-ECM-01" R=":RY" TIMEOUT="1" controller="ecm2" name="S1ARY" smarpod="smarpod_L" smarpodAxis="4"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="5" P="TEST-MO-ECM-01" R=":RZ" TIMEOUT="1" controller="ecm2" name="S1ARZ" smarpod="smarpod_L" smarpodAxis="5"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="6" P="TEST-MO-ECM-02" R=":X" TIMEOUT="1" controller="ecm2" name="S2AX" smarpod="smarpod_R" smarpodAxis="0"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="7" P="TEST-MO-ECM-02" R=":Y" TIMEOUT="1" controller="ecm2" name="S2AY" smarpod="smarpod_R" smarpodAxis="1"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="8" P="TEST-MO-ECM-02" R=":Z" TIMEOUT="1" controller="ecm2" name="S2AZ" smarpod="smarpod_R" smarpodAxis="2"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="9" P="TEST-MO-ECM-02" R=":RX" TIMEOUT="1" controller="ecm2" name="S2ARX" smarpod="smarpod_R" smarpodAxis="3"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="10" P="TEST-MO-ECM-02" R=":RY" TIMEOUT="1" controller="ecm2" name="S2ARY" smarpod="smarpod_R" smarpodAxis="4"/>
-	<smaractEcm.SmaractSmarpodAxis AXIS="11" P="TEST-MO-ECM-02" R=":RZ" TIMEOUT="1" controller="ecm2" name="S2ARZ" smarpod="smarpod_R" smarpodAxis="5"/>
-	<motor.basic_asyn_motor ADDR="0" DESC="M5L X Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5L:X" MRES=".001" P="TEST-MO-ECM-01" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="X" name="LX"/>
-	<motor.basic_asyn_motor ADDR="1" DESC="M5L Y Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5L:Y" MRES=".001" P="TEST-MO-ECM-01" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Y" name="LY"/>
-	<motor.basic_asyn_motor ADDR="2" DESC="M5L Z Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5L:Z" MRES=".001" P="TEST-MO-ECM-01" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Z" name="LZ"/>
-	<motor.basic_asyn_motor ADDR="3" DESC="M5L X Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5L:RX" MRES=".001" P="TEST-MO-ECM-01" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RX" name="LRX"/>
-	<motor.basic_asyn_motor ADDR="4" DESC="M5L Y Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5L:RY" MRES=".001" P="TEST-MO-ECM-01" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RY" name="LRY"/>
-	<motor.basic_asyn_motor ADDR="5" DESC="M5L Z Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5L:RZ" MRES=".001" P="TEST-MO-ECM-01" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RZ" name="LRZ"/>
-	<motor.basic_asyn_motor ADDR="6" DESC="M5R X Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5R:X" MRES=".001" P="TEST-MO-ECM-02" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="X" name="RX"/>
-	<motor.basic_asyn_motor ADDR="7" DESC="M5R Y Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5R:Y" MRES=".001" P="TEST-MO-ECM-02" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Y" name="RY"/>
-	<motor.basic_asyn_motor ADDR="8" DESC="M5R Z Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5R:Z" MRES=".001" P="TEST-MO-ECM-02" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Z" name="RZ"/>
-	<motor.basic_asyn_motor ADDR="9" DESC="M5R X Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5R:RX" MRES=".001" P="TEST-MO-ECM-02" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RX" name="RRX"/>
-	<motor.basic_asyn_motor ADDR="10" DESC="M5R Y Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5R:RY" MRES=".001" P="TEST-MO-ECM-02" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RY" name="RRY"/>
-	<motor.basic_asyn_motor ADDR="11" DESC="M5R Z Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5R:RZ" MRES=".001" P="TEST-MO-ECM-02" PORT="ecm2" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RZ" name="RRZ"/>
+	<smaractEcm.SmaractEcmController P="TEST-MO-ECM-02" PORT="M5.ECM" R=":ECM" TIMEOUT="1" asynAddr="0" asynPort="serial1" maxNoAxes="12" movePollPeriod="500" notMovePollPeriod="3000"/>
+	<smaractEcm.Smarpod P="TEST-MO-POD-01" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="M5.ECM" name="M5.SmarpodLeft" resolution=".000000001" unit="0"/>
+	<smaractEcm.Smarpod P="TEST-MO-POD-02" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="M5.ECM" name="M5.SmarpodRight" resolution=".000000001" unit="1"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="0" P="TEST-MO-POD-01" R=":X" TIMEOUT="1" controller="M5.ECM" name="S1AX" smarpod="M5.SmarpodLeft" smarpodAxis="0"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="1" P="TEST-MO-ECM-01" R=":Y" TIMEOUT="1" controller="M5.ECM" name="S1AY" smarpod="M5.SmarpodLeft" smarpodAxis="1"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="2" P="TEST-MO-ECM-01" R=":Z" TIMEOUT="1" controller="M5.ECM" name="S1AZ" smarpod="M5.SmarpodLeft" smarpodAxis="2"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="3" P="TEST-MO-ECM-01" R=":RX" TIMEOUT="1" controller="M5.ECM" name="S1ARX" smarpod="M5.SmarpodLeft" smarpodAxis="3"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="4" P="TEST-MO-ECM-01" R=":RY" TIMEOUT="1" controller="M5.ECM" name="S1ARY" smarpod="M5.SmarpodLeft" smarpodAxis="4"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="5" P="TEST-MO-ECM-01" R=":RZ" TIMEOUT="1" controller="M5.ECM" name="S1ARZ" smarpod="M5.SmarpodLeft" smarpodAxis="5"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="6" P="TEST-MO-ECM-02" R=":X" TIMEOUT="1" controller="M5.ECM" name="S2AX" smarpod="M5.SmarpodRight" smarpodAxis="0"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="7" P="TEST-MO-ECM-02" R=":Y" TIMEOUT="1" controller="M5.ECM" name="S2AY" smarpod="M5.SmarpodRight" smarpodAxis="1"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="8" P="TEST-MO-ECM-02" R=":Z" TIMEOUT="1" controller="M5.ECM" name="S2AZ" smarpod="M5.SmarpodRight" smarpodAxis="2"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="9" P="TEST-MO-ECM-02" R=":RX" TIMEOUT="1" controller="M5.ECM" name="S2ARX" smarpod="M5.SmarpodRight" smarpodAxis="3"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="10" P="TEST-MO-ECM-02" R=":RY" TIMEOUT="1" controller="M5.ECM" name="S2ARY" smarpod="M5.SmarpodRight" smarpodAxis="4"/>
+	<smaractEcm.SmaractSmarpodAxis AXIS="11" P="TEST-MO-ECM-02" R=":RZ" TIMEOUT="1" controller="M5.ECM" name="S2ARZ" smarpod="M5.SmarpodRight" smarpodAxis="5"/>
+	<motor.basic_asyn_motor ADDR="0" DESC="M5L X Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5L:X" MRES=".001" P="TEST-MO-ECM-01" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="X" name="M5.L_X"/>
+	<motor.basic_asyn_motor ADDR="1" DESC="M5L Y Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5L:Y" MRES=".001" P="TEST-MO-ECM-01" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Y" name="M5.L_Y"/>
+	<motor.basic_asyn_motor ADDR="2" DESC="M5L Z Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5L:Z" MRES=".001" P="TEST-MO-ECM-01" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Z" name="M5.L_Z"/>
+	<motor.basic_asyn_motor ADDR="3" DESC="M5L X Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5L:RX" MRES=".001" P="TEST-MO-ECM-01" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RX" name="M5.L_ROTX"/>
+	<motor.basic_asyn_motor ADDR="4" DESC="M5L Y Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5L:RY" MRES=".001" P="TEST-MO-ECM-01" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RY" name="M5.L_ROTY"/>
+	<motor.basic_asyn_motor ADDR="5" DESC="M5L Z Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5L:RZ" MRES=".001" P="TEST-MO-ECM-01" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RZ" name="M5.L_ROTZ"/>
+	<motor.basic_asyn_motor ADDR="6" DESC="M5R X Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5R:X" MRES=".001" P="TEST-MO-ECM-02" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="X" name="M5.R_X"/>
+	<motor.basic_asyn_motor ADDR="7" DESC="M5R Y Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5R:Y" MRES=".001" P="TEST-MO-ECM-02" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Y" name="M5.R_Y"/>
+	<motor.basic_asyn_motor ADDR="8" DESC="M5R Z Translation" DHLM="80000000" DLLM="-80000000" EGU="um" M=":M5R:Z" MRES=".001" P="TEST-MO-ECM-02" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="50" gda_name="Z" name="M5.R_Z"/>
+	<motor.basic_asyn_motor ADDR="9" DESC="M5R X Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5R:RX" MRES=".001" P="TEST-MO-ECM-02" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RX" name="M5.R_ROTX"/>
+	<motor.basic_asyn_motor ADDR="10" DESC="M5R Y Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5R:RY" MRES=".001" P="TEST-MO-ECM-02" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RY" name="M5.R_ROTY"/>
+	<motor.basic_asyn_motor ADDR="11" DESC="M5R Z Rotation" DHLM="80000000" DLLM="-80000000" EGU="udeg" M=":M5R:RZ" MRES=".001" P="TEST-MO-ECM-02" PORT="M5.ECM" PREC="5" SREV="200" TWV="10" VELO="10" gda_name="RZ" name="M5.R_ROTZ"/>
 </components>

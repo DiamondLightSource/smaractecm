@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 925
-y 354
-w 193
-h 250
+x 2482
+y 305
+w 195
+h 278
 font "arial-medium-r-10.0"
 ctlFont "arial-medium-r-10.0"
 btnFont "arial-medium-r-10.0"
@@ -33,7 +33,7 @@ release 0
 x 0
 y 5
 w 190
-h 240
+h 270
 lineColor index 14
 fill
 fillColor index 5
@@ -66,7 +66,7 @@ major 10
 minor 0
 release 0
 x 70
-y 55
+y 45
 w 115
 h 20
 controlPv "$(P):VELOCITY_RBV"
@@ -103,7 +103,7 @@ major 4
 minor 0
 release 0
 x 70
-y 20
+y 15
 w 115
 h 25
 fgColor index 25
@@ -123,7 +123,7 @@ major 4
 minor 1
 release 1
 x 5
-y 25
+y 20
 w 70
 h 20
 font "arial-bold-r-12.0"
@@ -142,7 +142,7 @@ major 10
 minor 0
 release 0
 x 70
-y 80
+y 70
 w 115
 h 20
 controlPv "$(P):VELOCITY"
@@ -160,7 +160,7 @@ major 4
 minor 1
 release 1
 x 5
-y 115
+y 100
 w 40
 h 20
 font "arial-bold-r-12.0"
@@ -179,7 +179,7 @@ major 4
 minor 0
 release 0
 x 70
-y 110
+y 95
 w 115
 h 25
 fgColor index 25
@@ -189,6 +189,168 @@ topShadowColor index 1
 botShadowColor index 11
 controlPv "$(P):PIVOTMODE"
 indicatorPv "$(P):PIVOTMODE_RBV"
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Textupdate)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 70
+y 125
+w 115
+h 20
+controlPv "$(P):PIVOT:$(XNAME)_RBV"
+precision 4
+fgColor index 16
+bgColor index 10
+fill
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Textentry)
+object TextentryClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 70
+y 150
+w 115
+h 20
+controlPv "$(P):PIVOT:$(XNAME)"
+precision 3
+fgColor index 25
+bgColor index 3
+fill
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Textentry)
+object TextentryClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 70
+y 200
+w 115
+h 20
+controlPv "$(P):PIVOT:$(YNAME)"
+precision 3
+fgColor index 25
+bgColor index 3
+fill
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Textupdate)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 70
+y 175
+w 115
+h 20
+controlPv "$(P):PIVOT:$(YNAME)_RBV"
+precision 4
+fgColor index 16
+bgColor index 10
+fill
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Textentry)
+object TextentryClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 70
+y 250
+w 115
+h 20
+controlPv "$(P):PIVOT:$(ZNAME)"
+precision 3
+fgColor index 25
+bgColor index 3
+fill
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Textupdate)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 70
+y 225
+w 115
+h 20
+controlPv "$(P):PIVOT:$(ZNAME)_RBV"
+precision 4
+fgColor index 16
+bgColor index 10
+fill
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Textupdate)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 5
+y 185
+w 65
+h 20
+controlPv "$(P):PIVOT:$(YNAME).DESC"
+precision 4
+fgColor index 14
+bgColor index 5
+fill
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Textupdate)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 5
+y 140
+w 65
+h 20
+controlPv "$(P):PIVOT:$(XNAME).DESC"
+precision 4
+fgColor index 14
+bgColor index 5
+fill
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Textupdate)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 5
+y 230
+w 65
+h 20
+controlPv "$(P):PIVOT:$(ZNAME).DESC"
+precision 4
+fgColor index 14
+bgColor index 5
+fill
 font "arial-bold-r-12.0"
 endObjectProperties
 

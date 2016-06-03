@@ -1,4 +1,4 @@
- /* smarPodUnit.cpp
+/* smarPodUnit.cpp
  *
  *  Created on: 10 Feb 2016
  *      Author: hgv27681
@@ -44,10 +44,17 @@ Smarpod::Smarpod(const char* port, EcmController* ctlr, double resolution,
                 ctlr), referenced(false), moveStatus(0), resolution(resolution), unit(
                 unit), velocity(0), getAxisStatus(false)
 {
-    for (int i = 0; i < AXIS_COUNT; i++)
+    int i;
+
+    for (i = 0; i < AXIS_COUNT; i++)
     {
         positions[i] = demandPositions[i] = 0;
         moving[i] = false;
+    }
+
+    for (i = 0; i < DIMENSIONS_COUNT; i++)
+    {
+        pivotPositions[i] = 0;
     }
 
     createParam(namePIVOT_POS_X, asynParamFloat64, &indexPIVOT_POS_X);
@@ -81,6 +88,8 @@ bool Smarpod::connected(int axisNum)
         doubleVal *= MM_CONVERT;
         setDoubleParam(indexVELOCITY, doubleVal);
 
+        getPivots();
+
         ok &= ctlr->command("sen?", NULL, 0, &intVal, 1, TIMEOUT);
         setIntegerParam(indexENCODER_MODE, intVal);
 
@@ -92,6 +101,23 @@ bool Smarpod::connected(int axisNum)
 
         callParamCallbacks();
     }
+
+    return ok;
+}
+
+bool Smarpod::getPivots()
+{
+    bool ok = true;
+
+    ok &= ctlr->command("piv?", NULL, 0, pivotPositions, DIMENSIONS_COUNT,
+    TIMEOUT);
+    for (int i = 0; i < DIMENSIONS_COUNT; i++)
+    {
+        pivotPositions[i] *= MM_CONVERT;
+    }
+    setDoubleParam(indexPIVOT_POS_X, pivotPositions[DIMX]);
+    setDoubleParam(indexPIVOT_POS_Y, pivotPositions[DIMY]);
+    setDoubleParam(indexPIVOT_POS_Z, pivotPositions[DIMZ]);
 
     return ok;
 }
@@ -236,7 +262,7 @@ asynStatus Smarpod::writeInt32(asynUser *pasynUser, epicsInt32 value)
     // set the parameter and do call backs (base class does this)
     result = asynPortDriver::writeInt32(pasynUser, value);
 
-    if(!ok)
+    if (!ok)
     {
         result = asynError;
     }
@@ -244,32 +270,45 @@ asynStatus Smarpod::writeInt32(asynUser *pasynUser, epicsInt32 value)
     return result;
 }
 
-
 asynStatus Smarpod::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
 {
     asynStatus result = asynSuccess;
     bool ok = true;
     int parameter = pasynUser->reason;
 
-    double vel = value / MM_CONVERT;
+    double meters = value / MM_CONVERT;
 
-    if (parameter == indexPIVOT_POS_X)
+    if ((parameter == indexPIVOT_POS_X) | (parameter == indexPIVOT_POS_Y)
+            | (parameter == indexPIVOT_POS_Z))
     {
+        if (parameter == indexPIVOT_POS_X)
+            pivotPositions[DIMX] = value;
+        else if (parameter == indexPIVOT_POS_Y)
+            pivotPositions[DIMY] = value;
+        else if (parameter == indexPIVOT_POS_Z)
+            pivotPositions[DIMZ] = value;
 
+        for(int i=0; i < DIMENSIONS_COUNT; i++)
+            pivotPositions[i] /= MM_CONVERT;
+        ok &= ctlr->setUnit(unit);
+        ok &= ctlr->command("piv", pivotPositions, DIMENSIONS_COUNT, NULL, 0,
+        TIMEOUT);
+        // make sure the controller was happy with this value
+        getPivots();
     }
     else if (parameter == indexVELOCITY)
     {
         ok &= ctlr->setUnit(unit);
-        ok &= ctlr->command("vel", &vel, 1, NULL, 0, TIMEOUT);
+        ok &= ctlr->command("vel", &meters, 1, NULL, 0, TIMEOUT);
         // make sure the controller was happy with this value
-        ok &= ctlr->command("vel?", NULL, 0, &vel, 1, TIMEOUT);
-        value = vel * MM_CONVERT;
+        ok &= ctlr->command("vel?", NULL, 0, &meters, 1, TIMEOUT);
+        value = meters * MM_CONVERT;
     }
 
     // set the parameter and do call backs (base class does this)
     result = asynPortDriver::writeFloat64(pasynUser, value);
 
-    if(!ok)
+    if (!ok)
     {
         result = asynError;
     }

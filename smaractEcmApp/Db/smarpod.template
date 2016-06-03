@@ -7,12 +7,12 @@
 #%  macro, YNAME, user name for the Y Axis
 #%  macro, ZNAME, user name for the Z Axis
 #%  macro, name, object and gui association name (also used as asyn port name)
-# % gui, $(name),  edmembed, smarpod_embed.edl, P=$(P)
+# % gui, $(name),  edmembed, smarpod_embed.edl, P=$(P), XNAME=$(XNAME=X), YNAME=$(YNAME=Y), ZNAME=$(ZNAME=Z)
 
 
 record(ai, "$(P):PIVOT:$(XNAME=X)_RBV")
 {
-  field(DESC, "$(XNAME=X)")
+  field(DESC, "Pivot $(XNAME=X)")
   field(SCAN, "I/O Intr")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_X")
@@ -22,14 +22,14 @@ record(ai, "$(P):PIVOT:$(XNAME=X)_RBV")
 #% autosave 2 VAL
 record(ao, "$(P):PIVOT:$(XNAME=X)")
 {
-  field(DESC, "$(XNAME=X)")
+  field(DESC, "Pivot $(XNAME=X)")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_X")
 }
 
 record(ai, "$(P):PIVOT:$(YNAME=Y)_RBV")
 {
-  field(DESC, "$(YNAME=Y)")
+  field(DESC, "Pivot $(YNAME=Y)")
   field(SCAN, "I/O Intr")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Y")
@@ -39,14 +39,14 @@ record(ai, "$(P):PIVOT:$(YNAME=Y)_RBV")
 #% autosave 2 VAL
 record(ao, "$(P):PIVOT:$(YNAME=Y)")
 {
-  field(DESC, "$(YNAME=Y)")
+  field(DESC, "Pivot $(YNAME=Y)")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Y")
 }
 
 record(ai, "$(P):PIVOT:$(ZNAME=Z)_RBV")
 {
-  field(DESC, "$(ZNAME=Z)")
+  field(DESC, "Pivot $(ZNAME=Z)")
   field(SCAN, "I/O Intr")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Z")
@@ -56,7 +56,7 @@ record(ai, "$(P):PIVOT:$(ZNAME=Z)_RBV")
 #% autosave 2 VAL
 record(ao, "$(P):PIVOT:$(ZNAME=Z)")
 {
-  field(DESC, "$(ZNAME=Z)")
+  field(DESC, "Pivot $(ZNAME=Z)")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Z")
 }
