@@ -29,8 +29,8 @@ public:
 
     // Overridden from smaractAxis
     virtual void calibrateSensor(TakeLock& takeLock, int yes);
-    virtual bool onceOnlyStatus(FreeLock& freeLock);
-    virtual bool pollStatus(FreeLock& freeLock);
+    virtual bool onceOnlyStatus(TakeLock& takeLock);
+    virtual bool pollStatus(TakeLock& takeLock);
 
 private:
     bool rotary;

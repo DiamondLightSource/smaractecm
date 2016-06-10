@@ -18,20 +18,20 @@
  * DONE get resolution correct
  * DONE velocity control
  * DONE Switching Unit number
- * pivot point setting (and mode)
- * sensor mode control (should be left default?)
+ * DONE pivot point setting (and mode)
+ * DONE sensor mode control (should be left default?)
  * DONE show error state on disconnect
  * CSS GUI - after testing with hardware
- * acceleration control??
+ * LEAVE ALONE acceleration control??
  * 
  * from first tests :-
  *  DONE need to cope with errors before referencing - dont treat errors as disconect
- *  note speeds are linear actuator - move speed control to smarpod?
+ *  DONE note speeds are linear actuator - move speed control to smarpod?
  *  DONE possibly allow moves during move - show only commanded axes moving ??
  * 
  * Bugs
  * loss of comms does not show in real hardware (does on sim?)
- * PINI of velocity and pivot point not working (on real HW)
+ * DONE PINI of velocity and pivot point not working (on real HW)
  * getting tdir on zrotation axis (and others?) -- try doinf and increase on NTMF 
  *      for all axes
  *************/
@@ -66,7 +66,7 @@ asynStatus SmarpodAxis::move(double position, int relative, double minVelocity,
 
 /** Get status from the controller that does not change.
  */
-bool SmarpodAxis::onceOnlyStatus(FreeLock& freeLock)
+bool SmarpodAxis::onceOnlyStatus(TakeLock& takeLock)
 {
     // If axis not connected to a physical address, do nothing
     if (!isConnected())
@@ -74,7 +74,6 @@ bool SmarpodAxis::onceOnlyStatus(FreeLock& freeLock)
 
     smarpod->connected(smarpodAxis);
 
-    TakeLock takeLock(freeLock);
     setIntegerParam(controller->motorStatusCommsError_, 0);
     setIntegerParam(controller->motorStatusHighLimit_, 0);
     setIntegerParam(controller->motorStatusLowLimit_, 0);
@@ -90,7 +89,7 @@ bool SmarpodAxis::onceOnlyStatus(FreeLock& freeLock)
 
 /** Get status from the controller that needs polling
  */
-bool SmarpodAxis::pollStatus(FreeLock& freeLock)
+bool SmarpodAxis::pollStatus(TakeLock& takeLock)
 {
     // If axis not connected to a physical address, do nothing
     if (!isConnected())
@@ -106,7 +105,6 @@ bool SmarpodAxis::pollStatus(FreeLock& freeLock)
 
     if (result)
     {
-        TakeLock takeLock(freeLock);
         setDoubleParam(controller->motorEncoderPosition_, (double) curPosition);
         setDoubleParam(controller->motorPosition_, (double) curPosition);
         setIntegerParam(controller->motorStatusDone_, (int) (moving == 0));
@@ -180,8 +178,7 @@ asynStatus SmarpodAxis::home(double minVelocity, double maxVelocity,
     smarpod->home();
 
     // Do a poll now
-    FreeLock freeLock(takeLock);
-    pollStatus(freeLock);
+    pollStatus(takeLock);
     return asynSuccess;
 }
 

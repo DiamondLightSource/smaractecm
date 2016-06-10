@@ -21,8 +21,8 @@ public:
 
     // Used by mcsController
     virtual void calibrateSensor(TakeLock& takeLock, int yes) = 0;
-    virtual bool onceOnlyStatus(FreeLock& freeLock) = 0;
-    virtual bool pollStatus(FreeLock& freeLock) = 0;
+    virtual bool onceOnlyStatus(TakeLock& takeLock) = 0;
+    virtual bool pollStatus(TakeLock& takeLock) = 0;
 
 protected:
     int physicalAxis();

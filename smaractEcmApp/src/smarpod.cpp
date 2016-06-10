@@ -105,6 +105,7 @@ bool Smarpod::connected(int axisNum)
     return ok;
 }
 
+// must call setUnit before this function
 bool Smarpod::getPivots()
 {
     bool ok = true;
@@ -121,7 +122,7 @@ bool Smarpod::getPivots()
 
     return ok;
 }
-
+// must call setUnit before this function
 double Smarpod::getVelocity()
 {
     return velocity / resolution;

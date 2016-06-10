@@ -96,7 +96,6 @@ EcmController::~EcmController()
 asynStatus EcmController::poll()
 {
     TakeLock takeLock(this, /*alreadyTaken=*/true);
-    FreeLock freeLock(takeLock);
     // Get current connection state
     if (paramConnected)
     {
@@ -115,8 +114,8 @@ asynStatus EcmController::poll()
             if (pAxis != NULL)
             {
                 // Try to poll twice if the first one fails
-                bool thisOneOk = (pAxis->pollStatus(freeLock)
-                        || pAxis->pollStatus(freeLock));
+                bool thisOneOk = (pAxis->pollStatus(takeLock)
+                        || pAxis->pollStatus(takeLock));
                 this->paramAxisConnected[i] = thisOneOk;
                 if (!thisOneOk)
                 {
@@ -128,7 +127,6 @@ asynStatus EcmController::poll()
         // Have we lost connection?
         if (!anyOk)
         {
-            TakeLock again(freeLock);
             paramConnected = false;
         }
     }
@@ -148,13 +146,12 @@ asynStatus EcmController::poll()
                 SmaractAxis* pAxis = dynamic_cast<SmaractAxis*>(getAxis(i));
                 if (pAxis != NULL)
                 {
-                    pAxis->onceOnlyStatus(freeLock);
+                    pAxis->onceOnlyStatus(takeLock);
                 }
             }
             if (ok)
             {
                 // Everything ok, update parameters
-                TakeLock again(freeLock);
                 paramVersion = version + info_header_len;
                 paramConnected = true;
             }
