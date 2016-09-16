@@ -16,6 +16,7 @@ record(ai, "$(P):PIVOT:$(XNAME=X)_RBV")
   field(SCAN, "I/O Intr")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_X")
+  field(PREC, "2")
 }
 
 #% archiver 10 Monitor
@@ -25,6 +26,7 @@ record(ao, "$(P):PIVOT:$(XNAME=X)")
   field(DESC, "Pivot $(XNAME=X)")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_X")
+  field(PREC, "2")
 }
 
 record(ai, "$(P):PIVOT:$(YNAME=Y)_RBV")
@@ -33,6 +35,7 @@ record(ai, "$(P):PIVOT:$(YNAME=Y)_RBV")
   field(SCAN, "I/O Intr")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Y")
+  field(PREC, "2")
 }
 
 #% archiver 10 Monitor
@@ -42,6 +45,7 @@ record(ao, "$(P):PIVOT:$(YNAME=Y)")
   field(DESC, "Pivot $(YNAME=Y)")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Y")
+  field(PREC, "2")
 }
 
 record(ai, "$(P):PIVOT:$(ZNAME=Z)_RBV")
@@ -50,6 +54,7 @@ record(ai, "$(P):PIVOT:$(ZNAME=Z)_RBV")
   field(SCAN, "I/O Intr")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Z")
+  field(PREC, "2")
 }
 
 #% archiver 10 Monitor
@@ -59,6 +64,7 @@ record(ao, "$(P):PIVOT:$(ZNAME=Z)")
   field(DESC, "Pivot $(ZNAME=Z)")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Z")
+  field(PREC, "2")
 }
 
 record(ai, "$(P):VELOCITY_RBV")
