@@ -8,4 +8,5 @@ O.*
 .pydevproject
 iocs/test*
 *~
-
+etc/smarpodSim/.idea
+etc/smarpodSim/.idea/workspace.xml

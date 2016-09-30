@@ -6,7 +6,12 @@
 # % macro,  R,       EPICS name suffix
 # % macro,  PORT,    Asyn port
 # % macro,  TIMEOUT, Timeout
+# % macro,  DESC,    Description of the controller
 # % gui,    $(PORT),  edmembed, smaractcontroller_embed.edl, P=$(P),R=$(R)
+
+# % gui, $(PORT), boyembed, smaractEcmApp_opi/ecm_embed_box.opi, P=$(P),R=$(R),DESC=$(DESC=$(PORT))
+# % gui, $(PORT), boyembed, smaractEcmApp_opi/ecm_embed.opi, P=$(P),R=$(R),DESC=$(DESC=$(PORT))
+
 record(stringin, "$(P)$(R):VERSION")
 {
     field(SCAN, "I/O Intr")

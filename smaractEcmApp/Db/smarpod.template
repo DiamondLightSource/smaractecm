@@ -6,9 +6,12 @@
 #%  macro, XNAME, user name for the X Axis
 #%  macro, YNAME, user name for the Y Axis
 #%  macro, ZNAME, user name for the Z Axis
+#%  macro, DESC, description of the smarpod
 #%  macro, name, object and gui association name (also used as asyn port name)
 # % gui, $(name),  edmembed, smarpod_embed.edl, P=$(P), XNAME=$(XNAME=X), YNAME=$(YNAME=Y), ZNAME=$(ZNAME=Z)
 
+# % gui, $(name), boyembed, smaractEcmApp_opi/smarpod_embed_box.opi, P=$(P), XNAME=$(XNAME=X), YNAME=$(YNAME=Y), ZNAME=$(ZNAME=Z), name=$(name), DESC=$(DESC)
+# % gui, $(name), boyembed, smaractEcmApp_opi/smarpod_embed.opi, P=$(P), XNAME=$(XNAME=X), YNAME=$(YNAME=Y), ZNAME=$(ZNAME=Z), name=$(name), DESC=$(DESC)
 
 record(ai, "$(P):PIVOT:$(XNAME=X)_RBV")
 {
