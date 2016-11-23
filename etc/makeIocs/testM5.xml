@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <components arch="linux-x86_64">
 	<asyn.AsynSerial baud="115200" bits="8" crtscts="0" name="serial1" parity="N" port="/dev/ttyUSB0" stop="1"/>
-	<smaractEcm.SmaractEcmController P="TEST-MO-ECM-02" PORT="M5.ECM" R=":ECM" TIMEOUT="1" asynAddr="0" asynPort="serial1" maxNoAxes="12" movePollPeriod="500" notMovePollPeriod="3000"/>
-	<smaractEcm.Smarpod P="TEST-MO-POD-01" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="M5.ECM" name="M5.SmarpodLeft" resolution=".000000001" unit="0"/>
-	<smaractEcm.Smarpod P="TEST-MO-POD-02" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="M5.ECM" name="M5.SmarpodRight" resolution=".000000001" unit="1"/>
+	<smaractEcm.SmaractEcmController DESC="xx" P="TEST-MO-ECM-02" PORT="M5.ECM" R=":ECM" TIMEOUT="1" asynAddr="0" asynPort="serial1" maxNoAxes="12" movePollPeriod="500" notMovePollPeriod="3000"/>
+	<smaractEcm.Smarpod DESC="xx" P="TEST-MO-POD-01" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="M5.ECM" name="M5.SmarpodLeft" resolution=".000000001" unit="0"/>
+	<smaractEcm.Smarpod DESC="xx" P="TEST-MO-POD-02" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="M5.ECM" name="M5.SmarpodRight" resolution=".000000001" unit="1"/>
 	<smaractEcm.SmaractSmarpodAxis AXIS="0" P="TEST-MO-POD-01" R=":X" TIMEOUT="1" controller="M5.ECM" name="S1AX" smarpod="M5.SmarpodLeft" smarpodAxis="0"/>
 	<smaractEcm.SmaractSmarpodAxis AXIS="1" P="TEST-MO-ECM-01" R=":Y" TIMEOUT="1" controller="M5.ECM" name="S1AY" smarpod="M5.SmarpodLeft" smarpodAxis="1"/>
 	<smaractEcm.SmaractSmarpodAxis AXIS="2" P="TEST-MO-ECM-01" R=":Z" TIMEOUT="1" controller="M5.ECM" name="S1AZ" smarpod="M5.SmarpodLeft" smarpodAxis="2"/>

@@ -12,6 +12,26 @@
 
 # % gui, $(name), boyembed, smaractEcmApp_opi/smarpod_embed_box.opi, P=$(P), XNAME=$(XNAME=X), YNAME=$(YNAME=Y), ZNAME=$(ZNAME=Z), name=$(name), DESC=$(DESC)
 # % gui, $(name), boyembed, smaractEcmApp_opi/smarpod_embed.opi, P=$(P), XNAME=$(XNAME=X), YNAME=$(YNAME=Y), ZNAME=$(ZNAME=Z), name=$(name), DESC=$(DESC)
+# % gui, $(name), boydetail, smaractEcmApp_opi/smarpod_detail.opi, P=$(P), XNAME=$(XNAME=X), YNAME=$(YNAME=Y), ZNAME=$(ZNAME=Z), name=$(name), DESC=$(DESC)
+
+
+# % gui, $(name=), readback, Velocity,  $(P):VELOCITY_RBV
+# % gui, $(name=), demand, Velocity,  $(P):VELOCITY
+
+# % gui, $(name=), readback, Pivot Mode, $(P):PIVOTMODE_RBV
+# % gui, $(name=), enum, Pivot Mode, $(P):PIVOTMODE
+
+# % gui, $(name=), readback, Pivot $(XNAME=X),  $(P):PIVOT:$(XNAME=X)_RBV
+# % gui, $(name=), demand, Pivot $(XNAME=X),  $(P):PIVOT:$(XNAME=X)
+# % gui, $(name=), readback, Pivot $(YNAME=Y),  $(P):PIVOT:$(YNAME=Y)_RBV
+# % gui, $(name=), demand, Pivot $(YNAME=Y),  $(P):PIVOT:$(YNAME=Y)
+# % gui, $(name=), readback, Pivot $(ZNAME=Z),  $(P):PIVOT:$(ZNAME=Z)_RBV
+# % gui, $(name=), demand, Pivot $(ZNAME=Z),  $(P):PIVOT:$(ZNAME=Z)
+
+# % gui, $(name=), readback, Encoder Mode, $(P):ENCODERMODE_RBV
+# % gui, $(name=), enum, Encoder Mode, $(P):ENCODERMODE
+
+# % gui, $(name), boyembed, smaractEcmApp_opi/smarpod_embed_box.opi, P=$(P), XNAME=$(XNAME=X), YNAME=$(YNAME=Y), ZNAME=$(ZNAME=Z), name=$(name), DESC=$(DESC)
 
 record(ai, "$(P):PIVOT:$(XNAME=X)_RBV")
 {
@@ -20,6 +40,7 @@ record(ai, "$(P):PIVOT:$(XNAME=X)_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_X")
   field(PREC, "2")
+  field(EGU, "mm")
 }
 
 #% archiver 10 Monitor
@@ -30,7 +51,8 @@ record(ao, "$(P):PIVOT:$(XNAME=X)")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_X")
   field(PREC, "2")
-}
+}# % gui, $(name), boyembed, smaractEcmApp_opi/smarpod_embed_box.opi, P=$(P), XNAME=$(XNAME=X), YNAME=$(YNAME=Y), ZNAME=$(ZNAME=Z), name=$(name), DESC=$(DESC)
+
 
 record(ai, "$(P):PIVOT:$(YNAME=Y)_RBV")
 {
@@ -39,11 +61,13 @@ record(ai, "$(P):PIVOT:$(YNAME=Y)_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Y")
   field(PREC, "2")
+  field(EGU, "mm")
 }
 
 #% archiver 10 Monitor
 #% autosave 2 VAL
-record(ao, "$(P):PIVOT:$(YNAME=Y)")
+record(ao, "$(P):PIVOT:$(YNAME=Y)")name),0,$(TIMEOUT=1))VELOCITY")
+  field(EGU, "mm/s")
 {
   field(DESC, "Pivot $(YNAME=Y)")
   field(DTYP, "asynFloat64")
@@ -58,6 +82,7 @@ record(ai, "$(P):PIVOT:$(ZNAME=Z)_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(name),0,$(TIMEOUT=1))PIVOT_POS_Z")
   field(PREC, "2")
+  field(EGU, "mm")
 }
 
 #% archiver 10 Monitor
@@ -76,7 +101,7 @@ record(ai, "$(P):VELOCITY_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(name),0,$(TIMEOUT=1))VELOCITY")
   field(EGU, "mm/s")
-  field(PREC, "3")
+  field(PREC, "3")  
 }
 
 #% archiver 10 Monitor

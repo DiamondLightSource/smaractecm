@@ -2,8 +2,8 @@
 <components arch="linux-x86_64">
 	<!--<asyn.AsynIP name="serial1" port="/dev/ttyUSB0"/>-->
 	<asyn.AsynSerial baud="115200" bits="8" crtscts="0" name="serial1" parity="N" port="/dev/ttyUSB0" stop="1"/>
-	<smaractEcm.SmaractEcmController P="BL21I-MO-POD-01" PORT="ecm1" R=":ECM1" TIMEOUT="1" asynAddr="0" asynPort="serial1" maxNoAxes="12" movePollPeriod="100" notMovePollPeriod="500"/>
-	<smaractEcm.Smarpod P="BL21I-MO-POD-01" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="ecm1" name="M4.Smarpod" resolution=".000000001" unit="0"/>
+	<smaractEcm.SmaractEcmController DESC="xx" P="BL21I-MO-POD-01" PORT="ecm1" R=":ECM1" TIMEOUT="1" asynAddr="0" asynPort="serial1" maxNoAxes="12" movePollPeriod="100" notMovePollPeriod="500"/>
+	<smaractEcm.Smarpod DESC="xx" P="BL21I-MO-POD-01" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="ecm1" name="M4.Smarpod" resolution=".000000001" unit="0"/>
 	<smaractEcm.SmaractSmarpodAxis AXIS="0" P="BL21I-MO-POD-01:A" R=":X" TIMEOUT="1" controller="ecm1" name="M4.Smarpod.X" smarpod="M4.Smarpod" smarpodAxis="0"/>
 	<smaractEcm.SmaractSmarpodAxis AXIS="1" P="BL21I-MO-POD-01:A" R=":Y" TIMEOUT="1" controller="ecm1" name="M4.Smarpod.Y" smarpod="M4.Smarpod" smarpodAxis="1"/>
 	<smaractEcm.SmaractSmarpodAxis AXIS="2" P="BL21I-MO-POD-01:A" R=":Z" TIMEOUT="1" controller="ecm1" name="M4.Smarpod.Z" smarpod="M4.Smarpod" smarpodAxis="2"/>

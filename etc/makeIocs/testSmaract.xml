@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <components arch="linux-x86_64">
 	<asyn.AsynIP name="smaract1_s" port="localhost:9099"/>
-	<smaractEcm.SmaractEcmController P="TEST-MO-SPOD-01" PORT="ecm1" R=":ECM1" TIMEOUT="1" asynAddr="0" asynPort="smaract1_s" maxNoAxes="12" movePollPeriod="500" notMovePollPeriod="3000"/>
-	<smaractEcm.Smarpod P="TEST-MO-SPOD-01" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="ecm1" name="smarpod1" resolution=".000000001" unit="0"/>
-	<smaractEcm.Smarpod P="TEST-MO-SPOD-02" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="ecm1" name="smarpod2" resolution=".000000001" unit="1"/>
+	<smaractEcm.SmaractEcmController DESC="xx" P="TEST-MO-SPOD-01" PORT="ecm1" R=":ECM1" TIMEOUT="1" asynAddr="0" asynPort="smaract1_s" maxNoAxes="12" movePollPeriod="500" notMovePollPeriod="3000"/>
+	<smaractEcm.Smarpod DESC="xx" P="TEST-MO-SPOD-01" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="ecm1" name="smarpod1" resolution=".000000001" unit="0"/>
+	<smaractEcm.Smarpod DESC="xx" P="TEST-MO-SPOD-02" TIMEOUT="1" XNAME="X" YNAME="Y" ZNAME="Z" controller="ecm1" name="smarpod2" resolution=".000000001" unit="1"/>
 	<smaractEcm.SmaractSmarpodAxis AXIS="0" P="TEST-MO-SPOD-01" R=":X" TIMEOUT="1" controller="ecm1" name="S1AX" smarpod="smarpod1" smarpodAxis="0"/>
 	<smaractEcm.SmaractSmarpodAxis AXIS="1" P="TEST-MO-SPOD-01" R=":Y" TIMEOUT="1" controller="ecm1" name="S1AY" smarpod="smarpod1" smarpodAxis="1"/>
 	<smaractEcm.SmaractSmarpodAxis AXIS="2" P="TEST-MO-SPOD-01" R=":Z" TIMEOUT="1" controller="ecm1" name="S1AZ" smarpod="smarpod1" smarpodAxis="2"/>

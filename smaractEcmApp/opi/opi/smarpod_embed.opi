@@ -10,7 +10,7 @@
   <background_color>
     <color name="Canvas" red="200" green="200" blue="200" />
   </background_color>
-  <boy_version>5.1.0.201609020750</boy_version>
+  <boy_version>5.1.0.201610071043</boy_version>
   <foreground_color>
     <color red="192" green="192" blue="192" />
   </foreground_color>
@@ -19,7 +19,7 @@
   <macros>
     <include_parent_macros>true</include_parent_macros>
   </macros>
-  <name></name>
+  <name />
   <rules />
   <scripts />
   <show_close_button>true</show_close_button>
@@ -71,7 +71,7 @@
     </scale_options>
     <scripts />
     <show_units>true</show_units>
-    <text></text>
+    <text />
     <tooltip>Readback
 $(pv_name)
 $(pv_value)</tooltip>
@@ -126,7 +126,16 @@ $(pv_value)</tooltip>
     <y>2</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.symbol.multistate.MultistateMonitorWidget" version="1.0.0">
-    <actions hook="false" hook_all="false" />
+    <actions hook="true" hook_all="false">
+      <action type="OPEN_DISPLAY">
+        <path>smarpod_detail.opi</path>
+        <macros>
+          <include_parent_macros>true</include_parent_macros>
+        </macros>
+        <mode>3</mode>
+        <description>Open detail screen</description>
+      </action>
+    </actions>
     <alarm_pulsing>true</alarm_pulsing>
     <align_to_nearest_second>false</align_to_nearest_second>
     <auto_size>true</auto_size>
@@ -238,7 +247,7 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_units>true</show_units>
-    <text></text>
+    <text />
     <tooltip>Readback
 $(pv_name)
 $(pv_value)</tooltip>
@@ -371,7 +380,7 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_units>true</show_units>
-    <text></text>
+    <text />
     <tooltip>Readback
 $(pv_name)
 $(pv_value)</tooltip>
@@ -424,7 +433,7 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_units>true</show_units>
-    <text></text>
+    <text />
     <tooltip>Readback
 $(pv_name)
 $(pv_value)</tooltip>
@@ -477,7 +486,7 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_units>true</show_units>
-    <text></text>
+    <text />
     <tooltip>Readback
 $(pv_name)
 $(pv_value)</tooltip>
