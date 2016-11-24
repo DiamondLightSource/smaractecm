@@ -15,11 +15,11 @@
     <color red="192" green="192" blue="192" />
   </foreground_color>
   <grid_space>5</grid_space>
-  <height>68</height>
+  <height>65</height>
   <macros>
     <include_parent_macros>true</include_parent_macros>
   </macros>
-  <name />
+  <name></name>
   <rules />
   <scripts />
   <show_close_button>true</show_close_button>
@@ -71,7 +71,7 @@
     </scale_options>
     <scripts />
     <show_units>true</show_units>
-    <text />
+    <text></text>
     <tooltip>Readback
 $(pv_name)
 $(pv_value)</tooltip>
@@ -79,7 +79,7 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Text Update</widget_type>
-    <width>86</width>
+    <width>91</width>
     <wrap_words>false</wrap_words>
     <wuid>-304029b7:147582c1239:-7964</wuid>
     <x>80</x>
@@ -247,7 +247,7 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_units>true</show_units>
-    <text />
+    <text></text>
     <tooltip>Readback
 $(pv_name)
 $(pv_value)</tooltip>
@@ -255,7 +255,7 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Text Update</widget_type>
-    <width>106</width>
+    <width>110</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-6960</wuid>
     <x>215</x>
@@ -319,7 +319,7 @@ $(pv_value)</tooltip>
     <foreground_color>
       <color name="Text: FG" red="0" green="0" blue="0" />
     </foreground_color>
-    <height>20</height>
+    <height>31</height>
     <horizontal_alignment>1</horizontal_alignment>
     <name>Label_2</name>
     <rules />
@@ -329,17 +329,18 @@ $(pv_value)</tooltip>
       <keep_wh_ratio>false</keep_wh_ratio>
     </scale_options>
     <scripts />
-    <text>Pivot Points :</text>
+    <text>Pivot 
+Points :</text>
     <tooltip></tooltip>
     <transparent>true</transparent>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Label</widget_type>
-    <width>99</width>
+    <width>61</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-6933</wuid>
-    <x>0</x>
-    <y>37</y>
+    <x>5</x>
+    <y>30</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -380,7 +381,7 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_units>true</show_units>
-    <text />
+    <text></text>
     <tooltip>Readback
 $(pv_name)
 $(pv_value)</tooltip>
@@ -388,11 +389,11 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Text Update</widget_type>
-    <width>57</width>
+    <width>75</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-692b</wuid>
-    <x>185</x>
-    <y>48</y>
+    <x>165</x>
+    <y>43</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -433,7 +434,7 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_units>true</show_units>
-    <text />
+    <text></text>
     <tooltip>Readback
 $(pv_name)
 $(pv_value)</tooltip>
@@ -441,11 +442,11 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Text Update</widget_type>
-    <width>57</width>
+    <width>75</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-6927</wuid>
-    <x>264</x>
-    <y>48</y>
+    <x>250</x>
+    <y>43</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -486,7 +487,7 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_units>true</show_units>
-    <text />
+    <text></text>
     <tooltip>Readback
 $(pv_name)
 $(pv_value)</tooltip>
@@ -494,11 +495,11 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Text Update</widget_type>
-    <width>57</width>
+    <width>75</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-6923</wuid>
-    <x>109</x>
-    <y>48</y>
+    <x>80</x>
+    <y>43</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -534,11 +535,11 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Label</widget_type>
-    <width>57</width>
+    <width>75</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-66df</wuid>
-    <x>185</x>
-    <y>26</y>
+    <x>165</x>
+    <y>23</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -574,11 +575,11 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Label</widget_type>
-    <width>57</width>
+    <width>75</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-66d7</wuid>
-    <x>264</x>
-    <y>26</y>
+    <x>250</x>
+    <y>23</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -614,10 +615,10 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Label</widget_type>
-    <width>57</width>
+    <width>75</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-66d3</wuid>
-    <x>109</x>
-    <y>26</y>
+    <x>80</x>
+    <y>23</y>
   </widget>
 </display>

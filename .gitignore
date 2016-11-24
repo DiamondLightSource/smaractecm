@@ -9,3 +9,4 @@ O.*
 iocs/test*
 *~
 .idea
+cmake-build-debug/
