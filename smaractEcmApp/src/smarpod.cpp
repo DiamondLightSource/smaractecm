@@ -282,6 +282,8 @@ asynStatus Smarpod::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
     if ((parameter == indexPIVOT_POS_X) | (parameter == indexPIVOT_POS_Y)
             | (parameter == indexPIVOT_POS_Z))
     {
+        if (this->isMoving()) return asynError;
+
         if (parameter == indexPIVOT_POS_X)
             pivotPositions[DIMX] = value;
         else if (parameter == indexPIVOT_POS_Y)
@@ -296,9 +298,14 @@ asynStatus Smarpod::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
         TIMEOUT);
         // make sure the controller was happy with this value
         getPivots();
+
+        // Update demands to readbacks. Leave EPICS display as before.
+        getCurrentPositions(true);
     }
     else if (parameter == indexVELOCITY)
     {
+        if (this->isMoving()) return asynError;
+
         ok &= ctlr->setUnit(unit);
         ok &= ctlr->command("vel", &meters, 1, NULL, 0, TIMEOUT);
         // make sure the controller was happy with this value
@@ -317,3 +324,13 @@ asynStatus Smarpod::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
     return result;
 }
 
+bool Smarpod::isMoving()
+{
+    for (int i = 0; i < AXIS_COUNT; i++) {
+        if (moving[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}

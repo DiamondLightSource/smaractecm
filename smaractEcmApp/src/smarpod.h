@@ -43,7 +43,8 @@ public:
 
 private:
     bool getCurrentPositions(bool setDemands = false);
-    bool  getPivots();
+    bool getPivots();
+    bool isMoving();
 
 private:
     EcmController* ctlr;
