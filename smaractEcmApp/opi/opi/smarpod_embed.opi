@@ -10,7 +10,7 @@
   <background_color>
     <color name="Canvas" red="200" green="200" blue="200" />
   </background_color>
-  <boy_version>5.1.0.201610071043</boy_version>
+  <boy_version>5.1.0.201710301201</boy_version>
   <foreground_color>
     <color red="192" green="192" blue="192" />
   </foreground_color>
@@ -48,7 +48,7 @@
     <border_width>1</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="1">Default Bold</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="1" pixels="true">Default Bold</opifont.name>
     </font>
     <forecolor_alarm_sensitive>true</forecolor_alarm_sensitive>
     <foreground_color>
@@ -98,7 +98,7 @@ $(pv_value)</tooltip>
     <border_width>0</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="0">Default</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="0" pixels="true">Default</opifont.name>
     </font>
     <foreground_color>
       <color name="Text: FG" red="0" green="0" blue="0" />
@@ -159,7 +159,7 @@ $(pv_value)</tooltip>
     <flip_horizontal>false</flip_horizontal>
     <flip_vertical>false</flip_vertical>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="0">Default</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="0" pixels="true">Default</opifont.name>
     </font>
     <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
     <foreground_color>
@@ -224,7 +224,7 @@ $(pv_value)</tooltip>
     <border_width>1</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="1">Default Bold</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="1" pixels="true">Default Bold</opifont.name>
     </font>
     <forecolor_alarm_sensitive>true</forecolor_alarm_sensitive>
     <foreground_color>
@@ -274,7 +274,7 @@ $(pv_value)</tooltip>
     <border_width>0</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="0">Default</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="0" pixels="true">Default</opifont.name>
     </font>
     <foreground_color>
       <color name="Text: FG" red="0" green="0" blue="0" />
@@ -314,7 +314,7 @@ $(pv_value)</tooltip>
     <border_width>0</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="0">Default</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="0" pixels="true">Default</opifont.name>
     </font>
     <foreground_color>
       <color name="Text: FG" red="0" green="0" blue="0" />
@@ -358,7 +358,7 @@ Points :</text>
     <border_width>1</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="1">Default Bold</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="1" pixels="true">Default Bold</opifont.name>
     </font>
     <forecolor_alarm_sensitive>true</forecolor_alarm_sensitive>
     <foreground_color>
@@ -411,7 +411,7 @@ $(pv_value)</tooltip>
     <border_width>1</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="1">Default Bold</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="1" pixels="true">Default Bold</opifont.name>
     </font>
     <forecolor_alarm_sensitive>true</forecolor_alarm_sensitive>
     <foreground_color>
@@ -445,7 +445,7 @@ $(pv_value)</tooltip>
     <width>75</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-6927</wuid>
-    <x>250</x>
+    <x>80</x>
     <y>43</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
@@ -464,7 +464,7 @@ $(pv_value)</tooltip>
     <border_width>1</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="1">Default Bold</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="1" pixels="true">Default Bold</opifont.name>
     </font>
     <forecolor_alarm_sensitive>true</forecolor_alarm_sensitive>
     <foreground_color>
@@ -498,7 +498,7 @@ $(pv_value)</tooltip>
     <width>75</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-6923</wuid>
-    <x>80</x>
+    <x>250</x>
     <y>43</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
@@ -514,7 +514,7 @@ $(pv_value)</tooltip>
     <border_width>0</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="0">Default</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="0" pixels="true">Default</opifont.name>
     </font>
     <foreground_color>
       <color name="Text: FG" red="0" green="0" blue="0" />
@@ -554,7 +554,7 @@ $(pv_value)</tooltip>
     <border_width>0</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="0">Default</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="0" pixels="true">Default</opifont.name>
     </font>
     <foreground_color>
       <color name="Text: FG" red="0" green="0" blue="0" />
@@ -578,7 +578,7 @@ $(pv_value)</tooltip>
     <width>75</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-66d7</wuid>
-    <x>250</x>
+    <x>80</x>
     <y>23</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
@@ -594,7 +594,7 @@ $(pv_value)</tooltip>
     <border_width>0</border_width>
     <enabled>true</enabled>
     <font>
-      <opifont.name fontName="Liberation Sans" height="11" style="0">Default</opifont.name>
+      <opifont.name fontName="Liberation Sans" height="15" style="0" pixels="true">Default</opifont.name>
     </font>
     <foreground_color>
       <color name="Text: FG" red="0" green="0" blue="0" />
@@ -618,7 +618,7 @@ $(pv_value)</tooltip>
     <width>75</width>
     <wrap_words>false</wrap_words>
     <wuid>-60075f97:15741fb8cb6:-66d3</wuid>
-    <x>80</x>
+    <x>250</x>
     <y>23</y>
   </widget>
 </display>
