@@ -152,7 +152,34 @@ asynStatus EcmController::poll()
             if (ok)
             {
                 // Everything ok, update parameters
-                paramVersion = version + info_header_len;
+
+                std::string str_version(version);
+
+                // // Current compiler version not supporting regex!
+                // const std::regex pattern("[a-zA-Z\s:]{15,}");
+                // str_version = std::regex_replace(str_version, pattern, ", ");
+
+                std::string str1 = "Device Serial Number: ";
+                std::string str2 = "Device Product Code: ";
+                std::string str3 = "Firmware Version: ";
+                
+                size_t pos0 = str_version.find(str1);
+                size_t pos1 = str_version.find(str2, pos0);
+                size_t pos2 = str_version.find(str3, pos1);
+                
+                size_t token1_begin = pos0 + str1.length();
+                std::string serial_number = str_version.substr(token1_begin, pos1 - token1_begin);
+                
+                size_t token2_begin = pos1 + str2.length();
+                std::string product_code = str_version.substr(token2_begin, pos2 - token2_begin);
+
+                size_t token3_begin = pos2 + str3.length();
+                std::string firmware = str_version.substr(token3_begin, std::string::npos - token3_begin);
+
+                std::string stripped_version = "sn:" + serial_number + ",#:" + product_code + ",f:" + firmware;
+                
+                paramVersion = stripped_version;
+                
                 paramConnected = true;
             }
         }

@@ -10,3 +10,4 @@ iocs/test*
 *~
 .idea
 cmake-build-debug/
+.vscode
