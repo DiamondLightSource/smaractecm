@@ -136,7 +136,7 @@ asynStatus EcmController::poll()
         bool ok = true;
         char version[RXBUFFERSIZE];
 
-        ok = ok && command("%info version", version, RXBUFFERSIZE, TIMEOUT,
+        ok = ok && command("%info device", version, RXBUFFERSIZE, TIMEOUT,
                         true);
         if (ok)
         {
